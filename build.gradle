@@ -38,10 +38,12 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     // Lombok
     compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
     // Flyway
     implementation 'org.flywaydb:flyway-core:9.15.2'
-    // Testing Packages
+    // Annotation Processors
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+    // Testing Package
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./db/rental2db
+    url: jdbc:h2:file:./db/rental2db;DB_CLOSE_DELAY=-1;MODE=LEGACY
     driverClassName: org.h2.Driver
     username: sa
     password: password
@@ -10,4 +10,15 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   flyway:
     locations: classpath:db/migration,classpath:db/data
-    schemas: car_rental
+
+jwt:
+  expiration:
+    time: 120
+  public:
+    key: classpath:rsaKey/rsa.pub
+  private:
+    key: classpath:rsaKey/rsa.key
+
+logging:
+  level:
+    root: debug

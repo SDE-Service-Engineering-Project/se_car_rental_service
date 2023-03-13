@@ -1,0 +1,22 @@
+package at.ac.fhcampuswien.car_rental.dto.auth;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
+public record RegisterDTO(
+        @NotEmpty(message = "{inputNotEmpty}")
+        @Size(min = 3, max = 32, message = "Username must be between {min} and {max} characters")
+        String userName,
+
+        @NotEmpty
+        @Size(min = 3, max = 30, message = "First name must be between {min} and {max} characters")
+        String firstName,
+
+        @NotEmpty
+        @Size(min = 3, max = 30, message = "Last name must be between {min} and {max} characters")
+        String lastName,
+
+        @NotEmpty(message = "{inputNotEmpty}")
+        @Size(min = 8, max = 30, message = "Password must be between {min} and {max} characters")
+        String password) {
+}
