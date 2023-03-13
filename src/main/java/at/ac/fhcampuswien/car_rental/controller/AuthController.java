@@ -39,14 +39,14 @@ public class AuthController {
     public ResponseEntity<AuthenticationDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         AuthenticationDTO login = userService.login(loginDTO);
         if (login == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or Password are wrong");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or password are wrong");
         }
         return ResponseEntity.ok(login);
     }
 
     @Operation(summary = "Change a user's password")
     @PostMapping("/password")
-    public ResponseEntity<Void> updatePassword(@RequestBody ChangePasswordDTO passwordDTO) {
+    public ResponseEntity<Void> updatePassword(@Valid @RequestBody ChangePasswordDTO passwordDTO) {
         userService.changePassword(passwordDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

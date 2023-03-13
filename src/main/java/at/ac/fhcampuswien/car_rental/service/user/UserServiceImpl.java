@@ -75,13 +75,6 @@ public class UserServiceImpl implements UserService {
         validatePassword(password, getUserEntity(getUserName()).getPassword());
     }
 
-    private void validatePassword(String password, String dbPassword) {
-        if (!passwordEncoderMapper.doesPasswordMatch(password, dbPassword)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password wrong");
-        }
-    }
-
-
     /**
      * Authenticates a user based on username and password in spring security context
      */
@@ -116,4 +109,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found"));
     }
 
+    private void validatePassword(String password, String dbPassword) {
+        if (!passwordEncoderMapper.doesPasswordMatch(password, dbPassword)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password wrong");
+        }
+    }
 }

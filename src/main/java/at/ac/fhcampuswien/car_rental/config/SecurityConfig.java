@@ -73,14 +73,12 @@ public class SecurityConfig {
      * <p>
      * password encoder is used to encrypt plain text passwords
      * <p>
-     * setHideUserNotFoundExceptions is disabled to fulfill requirements (should not be enabled)
      */
     @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-        authProvider.setHideUserNotFoundExceptions(false);
         return authProvider;
     }
 

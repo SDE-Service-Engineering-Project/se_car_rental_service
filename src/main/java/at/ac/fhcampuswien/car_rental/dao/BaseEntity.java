@@ -22,6 +22,4 @@ public class BaseEntity implements Serializable {
     Integer version;
     @Column(name = "TST_CREATED_ON")
     Instant createdOn;
-    @Column(name = "TST_UPDATED_ON")
-    Instant updatedOn;
 }

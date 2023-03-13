@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.car_rental.service;
+package at.ac.fhcampuswien.car_rental.service.user;
 
 import at.ac.fhcampuswien.car_rental.repository.auth.UserRepository;
 import lombok.AccessLevel;
