@@ -8,12 +8,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
-@Mapper(componentModel = "spring", imports = {Instant.class},
+@Mapper(componentModel = "spring", imports = {LocalDateTime.class},
         uses = {PasswordEncoderMapper.class})
 public interface UserMapper {
 
-    @Mapping(target = "createdOn", expression = "java(Instant.now())")
+    @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")
     @Mapping(target = "password", source = "password", qualifiedBy = EncodedMapping.class)
     UserEntity toEntity(RegisterDTO dto);
 }

@@ -17,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +74,12 @@ public class UserServiceImpl implements UserService {
         validatePassword(password, getUserEntity(getUserName()).getPassword());
     }
 
+    @Override
+    public UserEntity getUserEntity(String userName) {
+        return repository.findByUserName(userName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found"));
+    }
+
     /**
      * Authenticates a user based on username and password in spring security context
      */
@@ -86,7 +91,7 @@ public class UserServiceImpl implements UserService {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             String token = jwtProvider.generateToken(authenticate);
 
-            return new AuthenticationDTO(token, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInMillis()), loginDTO.userName());
+            return new AuthenticationDTO(token, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), loginDTO.userName());
         } catch (AuthenticationException e) {
             log.error("Could not find user name {} or password wrong!", loginDTO.userName());
         }
@@ -96,17 +101,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthenticationDTO refreshAccessToken(RefreshTokenDTO refreshTokenRequest) {
         refreshTokenService.validateRefreshToken(refreshTokenRequest.refreshToken());
-        return new AuthenticationDTO(jwtProvider.generateTokenWithUserName(refreshTokenRequest.userName()), refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInMillis()), refreshTokenRequest.userName());
+        return new AuthenticationDTO(jwtProvider.generateTokenWithUserName(refreshTokenRequest.userName()), refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), refreshTokenRequest.userName());
     }
 
-    private String getUserName() {
+    @Override
+    public String getUserName() {
         Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getSubject();
-    }
-
-    private UserEntity getUserEntity(String userName) {
-        return repository.findByUserName(userName)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found"));
     }
 
     private void validatePassword(String password, String dbPassword) {

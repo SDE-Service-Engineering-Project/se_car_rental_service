@@ -18,10 +18,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @OpenAPIDefinition(info = @Info(title = "Authentication Endpoint", version = "1.0"))
-@Log4j2
 public class AuthController {
 
     UserService userService;
@@ -45,7 +45,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Change a user's password")
-    @PostMapping("/password")
+    @PutMapping("/user")
     public ResponseEntity<Void> updatePassword(@Valid @RequestBody ChangePasswordDTO passwordDTO) {
         userService.changePassword(passwordDTO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -62,9 +62,9 @@ public class AuthController {
      * Instead, the access token is very short-lived, and when the user logs out we delete the refresh token.
      */
     @Operation(summary = "Logout a user")
-    @PostMapping("/logout/{refreshToken}")
-    public ResponseEntity<Void> logout(@PathVariable String refreshToken) {
-        refreshTokenService.deleteRefreshToken(refreshToken);
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody LogoutDTO refreshToken) {
+        refreshTokenService.deleteRefreshToken(refreshToken.refreshToken());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

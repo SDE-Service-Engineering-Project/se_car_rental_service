@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.car_rental.service.user;
 
+import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dto.auth.*;
 
 public interface UserService {
@@ -15,4 +16,6 @@ public interface UserService {
     void deleteMyAccount();
 
     void verifyPassword(String password);
+    UserEntity getUserEntity(String userName);
+    String getUserName();
 }

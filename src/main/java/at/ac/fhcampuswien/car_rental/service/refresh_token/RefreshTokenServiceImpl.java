@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -24,7 +25,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshTokenEntity generateRefreshToken() {
         RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
         refreshTokenEntity.setToken(UUID.randomUUID().toString());
-        refreshTokenEntity.setCreatedOn(Instant.now());
+        refreshTokenEntity.setCreatedOn(LocalDateTime.now());
 
         return refreshTokenRepository.save(refreshTokenEntity);
     }
