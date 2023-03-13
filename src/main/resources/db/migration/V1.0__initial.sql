@@ -54,7 +54,6 @@ CREATE TABLE refresh_tokens (
 ;
 
 
-
 -- -----------------------------------------------------
 -- Table Bookings
 -- -----------------------------------------------------
@@ -68,6 +67,7 @@ CREATE TABLE bookings (
     TXT_BOOKING_STATUS VARCHAR(24) NOT NULL,
     BI_BOOKING_PRICE BIGINT NOT NULL,
     INT_PRECISION INTEGER NOT NULL,
+    TXT_CURRENCY VARCHAR(8) NOT NULL,
     ID_CAR INTEGER NOT NULL,
     ID_USER INTEGER NOT NULL,
     PRIMARY KEY (ID_BOOKING),
@@ -82,5 +82,3 @@ CREATE TABLE bookings (
 CREATE INDEX fk_bookings_cars_idx ON bookings (ID_CAR);
 
 CREATE INDEX fk_bookings_users_idx ON bookings (ID_USER);
-
-COMMIT;

@@ -23,7 +23,7 @@ server:
 
 jwt:
   expiration:
-    time: 120
+    time: 600
   public:
     key: classpath:rsaKey/rsa.pub
   private:

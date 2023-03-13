@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
@@ -21,5 +22,5 @@ public class BaseEntity implements Serializable {
     @Version
     Integer version;
     @Column(name = "TST_CREATED_ON")
-    Instant createdOn;
+    LocalDateTime createdOn;
 }
