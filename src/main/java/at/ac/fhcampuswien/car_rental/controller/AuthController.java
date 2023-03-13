@@ -21,7 +21,6 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-@OpenAPIDefinition(info = @Info(title = "Authentication Endpoint", version = "1.0"))
 public class AuthController {
 
     UserService userService;

@@ -52,6 +52,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDTO getBookingById(Long bookingId) {
+        // TODO: Throw error if searching for Booking which does not belong to User?
         BookingEntity bookingEntity = getBookingEntity(bookingId);
         return bookingMapper.toDto(bookingEntity);
     }
