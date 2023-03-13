@@ -42,6 +42,7 @@ public class BookingServiceImpl implements BookingService {
     UserService userService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDTO> getMyBookings() {
         UserEntity user = userService.getUserEntity(userService.getUserName());
 
@@ -51,6 +52,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDTO getBookingById(Long bookingId) {
         // TODO: Throw error if searching for Booking which does not belong to User?
         BookingEntity bookingEntity = getBookingEntity(bookingId);
@@ -60,13 +62,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDTO createBooking(CreateBookingDTO createBookingDTO) {
-        // Check if Car is already booked before proceeding
-        Optional<BookingEntity> savedBookingEntities = bookingRepository.findFirstByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
-        if (savedBookingEntities.isPresent()) {
-            log.error("Car with the id {} is already booked!", createBookingDTO.carId());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked!");
-        }
-
         // Check if Car with the Id exists
         carRepository.findById(createBookingDTO.carId()).orElseThrow(() -> {
                     log.error("Could not find car with id {}, could not perform booking!", createBookingDTO.carId());
@@ -74,6 +69,14 @@ public class BookingServiceImpl implements BookingService {
                 }
         );
 
+        // Check if Car is already booked before proceeding
+        Optional<BookingEntity> savedBookingEntities = bookingRepository.findFirstByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
+        if (savedBookingEntities.isPresent()) {
+            log.error("Car with the id {} is already booked!", createBookingDTO.carId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked!");
+        }
+
+        // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
         BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), createBookingDTO.carId());
         bookingRepository.save(entity);
