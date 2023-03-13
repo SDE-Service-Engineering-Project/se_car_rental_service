@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.4'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'at.ac.fhcampuswien'
@@ -34,14 +34,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // Spring Boot Web Services (for SOAP)?
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
-    // H2 Database
-    runtimeOnly 'com.h2database:h2'
+    // Postgresql
+    implementation 'org.postgresql:postgresql:42.5.4'
     // Lombok
     compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
     // Flyway
     implementation 'org.flywaydb:flyway-core:9.15.2'
-    // Testing Packages
+    // Annotation Processors
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+    // Testing Package
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }

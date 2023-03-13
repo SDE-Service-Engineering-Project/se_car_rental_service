@@ -1,13 +1,31 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./db/rental2db
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: admin
+    password: 'admin'
+    hikari:
+      maximum-pool-size: 30
   jpa:
     hibernate:
       ddl-auto: none
-    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        default_schema: car_rental
   flyway:
     locations: classpath:db/migration,classpath:db/data
     schemas: car_rental
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+jwt:
+  expiration:
+    time: 120
+  public:
+    key: classpath:rsaKey/rsa.pub
+  private:
+    key: classpath:rsaKey/rsa.key
+
