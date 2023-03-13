@@ -1,13 +1,14 @@
 package at.ac.fhcampuswien.car_rental.dao;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Version;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.Instant;
 

@@ -1,13 +1,11 @@
 package at.ac.fhcampuswien.car_rental.controller;
 
 import at.ac.fhcampuswien.car_rental.dto.auth.*;
-//import at.ac.fhcampuswien.car_rental.exception.custom.UserAlreadyRegisteredException;
 import at.ac.fhcampuswien.car_rental.service.refresh_token.RefreshTokenService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor

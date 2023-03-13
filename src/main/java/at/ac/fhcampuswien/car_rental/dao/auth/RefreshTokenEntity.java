@@ -1,12 +1,13 @@
 package at.ac.fhcampuswien.car_rental.dao.auth;
 
 import at.ac.fhcampuswien.car_rental.dao.BaseEntity;
-import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+
+import javax.persistence.*;
 
 
 @Entity

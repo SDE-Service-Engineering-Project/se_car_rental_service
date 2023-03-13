@@ -1,7 +1,8 @@
 package at.ac.fhcampuswien.car_rental.dto.auth;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public record RegisterDTO(
         @NotEmpty(message = "{inputNotEmpty}")

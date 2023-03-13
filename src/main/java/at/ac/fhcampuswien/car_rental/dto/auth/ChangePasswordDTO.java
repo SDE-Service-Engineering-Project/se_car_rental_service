@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.car_rental.dto.auth;
 
-import jakarta.validation.constraints.NotEmpty;
+
+import javax.validation.constraints.NotEmpty;
 
 public record ChangePasswordDTO(
         @NotEmpty(message = "{inputNotEmpty}")

@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -93,8 +94,8 @@ public class UserServiceImpl implements UserService {
             String token = jwtProvider.generateToken(authenticate);
 
             return new AuthenticationDTO(token, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInMillis()), loginDTO.userName());
-        } catch (UsernameNotFoundException e) {
-            log.error("Could not find user name {}", loginDTO.userName());
+        } catch (AuthenticationException e) {
+            log.error("Could not find user name {} or password wrong!", loginDTO.userName());
         }
         return null;
     }
