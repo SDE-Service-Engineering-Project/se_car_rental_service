@@ -31,9 +31,7 @@ public class BookingEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     BookingStatus bookingStatus;
     @Column(name = "BI_BOOKING_PRICE")
-    BigInteger price;
-    @Column(name = "INT_PRECISION")
-    Integer precision;
+    Float price;
     @Column(name = "TXT_CURRENCY")
     String currency;
     @Column(name = "ID_CAR")

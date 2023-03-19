@@ -11,8 +11,7 @@ public record BookingDTO(
         LocalDateTime createdOn,
         LocalDateTime bookedUntil,
         String bookingStatus,
-        BigInteger price,
-        Integer precision,
+        Float price,
         String currency,
         Long carId,
         Long userId

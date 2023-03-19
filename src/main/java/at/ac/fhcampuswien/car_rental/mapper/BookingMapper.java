@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -22,7 +23,6 @@ public interface BookingMapper {
     @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "price", source = "dto.price")
-    @Mapping(target = "precision", source = "dto.precision")
     @Mapping(target = "currency", source = "dto.currency")
     @Mapping(target = "carId", source = "carId")
     @Mapping(target = "userId", source = "userId")
@@ -30,7 +30,6 @@ public interface BookingMapper {
 
     @Mapping(target = "bookedUntil", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedUntil()))")
     @Mapping(target = "price", expression = "java(Objects.requireNonNullElse(dto.price(), entity.getPrice()))")
-    @Mapping(target = "precision", expression = "java(Objects.requireNonNullElse(dto.precision(), entity.getPrecision()))")
     @Mapping(target = "currency", expression = "java(Objects.requireNonNullElse(dto.currency(), entity.getCurrency()))")
     void updateEntity(@MappingTarget BookingEntity entity, UpdateBookingDTO dto);
 }
