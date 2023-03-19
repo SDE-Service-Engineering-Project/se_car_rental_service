@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.car_rental.dto.booking;
 
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
+import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 
 import javax.persistence.*;
 import java.math.BigInteger;
@@ -13,7 +14,7 @@ public record BookingDTO(
         String bookingStatus,
         Float price,
         String currency,
-        Long carId,
+        CarDTO car,
         Long userId
 ) {
 }

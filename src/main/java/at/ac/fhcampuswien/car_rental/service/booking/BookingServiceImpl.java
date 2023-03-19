@@ -7,7 +7,9 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
+import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
 import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
@@ -39,8 +41,8 @@ public class BookingServiceImpl implements BookingService {
     BookingRepository bookingRepository;
     CarRepository carRepository;
     BookingMapper bookingMapper;
+    CarMapper carMapper;
     UserService userService;
-    CurrencyConverterService currencyConverterService;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
         UserEntity user = userService.getUserEntity(userService.getUserName());
 
         return bookingRepository.findAllByUserIdEquals(user.getUserId())
-                .stream().map(bookingMapper::toDto)
+                .stream().map(item -> bookingMapper.toDto(item, carMapper.toDto(item.getCar())))
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDTO getBookingById(Long bookingId) {
         // TODO: Throw error if searching for Booking which does not belong to User?
         BookingEntity bookingEntity = getBookingEntity(bookingId);
-        return bookingMapper.toDto(bookingEntity);
+        return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
     }
 
     @Override
@@ -82,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), createBookingDTO.carId());
         bookingRepository.save(entity);
 
-        return bookingMapper.toDto(entity);
+        return bookingMapper.toDto(entity, carMapper.toDto(entity.getCar()));
     }
 
     @Override
@@ -99,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(bookingEntity);
 
-        return bookingMapper.toDto(bookingEntity);
+        return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
     }
 
     @Override

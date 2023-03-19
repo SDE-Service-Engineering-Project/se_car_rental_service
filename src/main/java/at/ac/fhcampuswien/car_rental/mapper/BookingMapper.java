@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,7 +18,16 @@ import java.util.Objects;
 
 @Mapper(componentModel = "spring", imports = {LocalDateTime.class, Objects.class})
 public interface BookingMapper {
-    BookingDTO toDto(BookingEntity entity);
+
+    @Mapping(target = "bookingId", source = "entity.bookingId")
+    @Mapping(target = "bookedUntil", source = "entity.bookedUntil")
+    @Mapping(target = "bookingStatus", source = "entity.bookingStatus")
+    @Mapping(target = "price", source = "entity.price")
+    @Mapping(target = "currency", source = "entity.currency")
+    @Mapping(target = "createdOn", source = "entity.createdOn")
+    @Mapping(target = "userId", source = "entity.userId")
+    @Mapping(target = "car", source = "carDTO")
+    BookingDTO toDto(BookingEntity entity, CarDTO carDTO);
 
     @Mapping(target = "bookingStatus", constant = "BOOKED")
     @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")

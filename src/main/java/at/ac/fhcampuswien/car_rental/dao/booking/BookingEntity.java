@@ -36,6 +36,10 @@ public class BookingEntity extends BaseEntity {
     String currency;
     @Column(name = "ID_CAR")
     Long carId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="ID_CAR", nullable=false, insertable = false, updatable = false)
+    private CarEntity car;
+
     @Column(name = "ID_USER")
     Long userId;
 }
