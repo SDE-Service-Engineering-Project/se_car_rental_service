@@ -32,9 +32,7 @@ public class CarEntity extends BaseEntity {
     @Column(name = "NUM_CONSTRUCTION_YEAR")
     Integer constructionYear;
     @Column(name = "BI_PRICE")
-    BigInteger price;
-    @Column(name = "INT_PRECISION")
-    Integer precision;
+    Float price;
     @Column(name = "TXT_CURRENCY")
     String currency;
 }

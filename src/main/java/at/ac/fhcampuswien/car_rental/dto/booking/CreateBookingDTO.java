@@ -10,9 +10,7 @@ public record CreateBookingDTO(
         @NotEmpty(message = "No end date for booking set!")
         LocalDateTime bookedUntil,
         @NotEmpty(message = "No price provided!")
-        BigInteger price,
-        @NotEmpty(message = "No precision provided!")
-        Integer precision,
+        Float price,
         @NotEmpty(message = "No currency provided!")
         String currency,
         @NotEmpty(message = "No car id provided!")

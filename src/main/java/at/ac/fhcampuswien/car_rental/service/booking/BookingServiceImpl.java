@@ -1,45 +1,46 @@
 package at.ac.fhcampuswien.car_rental.service.booking;
 
+import at.ac.fhcampuswien.car_rental.config.SoapAuthHandler;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
-import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
-import at.ac.fhcampuswien.car_rental.service.car.CarService;
+import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
+import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService;
+import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService_Service;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.xml.ws.handler.Handler;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 @Log4j2
+@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class BookingServiceImpl implements BookingService {
     BookingRepository bookingRepository;
     CarRepository carRepository;
     BookingMapper bookingMapper;
     UserService userService;
+    CurrencyConverterService currencyConverterService;
 
     @Override
     @Transactional(readOnly = true)
