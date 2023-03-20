@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
@@ -64,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDTO createBooking(CreateBookingDTO createBookingDTO) {
+    public CreateBookingResponseDTO createBooking(CreateBookingDTO createBookingDTO) {
         // Check if Car with the Id exists
         carRepository.findById(createBookingDTO.carId()).orElseThrow(() -> {
                     log.error("Could not find car with id {}, could not perform booking!", createBookingDTO.carId());
@@ -82,9 +83,9 @@ public class BookingServiceImpl implements BookingService {
         // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
         BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), createBookingDTO.carId());
-        bookingRepository.save(entity);
+        entity = bookingRepository.save(entity);
 
-        return bookingMapper.toDto(entity, carMapper.toDto(entity.getCar()));
+        return bookingMapper.toCreateBookingResponseDto(entity);
     }
 
     @Override
