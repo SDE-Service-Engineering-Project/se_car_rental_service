@@ -74,10 +74,15 @@ public class BookingServiceImpl implements BookingService {
         );
 
         // Check if Car is already booked before proceeding
-        Optional<BookingEntity> savedBookingEntities = bookingRepository.findFirstByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
-        if (savedBookingEntities.isPresent()) {
-            log.error("Car with the id {} is already booked!", createBookingDTO.carId());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked!");
+        List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
+        if (savedBookingEntities.size() > 0) {
+            savedBookingEntities.forEach(item -> {
+                if (createBookingDTO.bookedFrom().isAfter(item.getBookedFrom()) && createBookingDTO.bookedFrom().isBefore(item.getBookedUntil()) ||
+                        createBookingDTO.bookedUntil().isAfter(item.getBookedFrom()) && createBookingDTO.bookedUntil().isBefore(item.getBookedUntil())) {
+                    log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
+                }
+            });
         }
 
         // Booking Procedure
@@ -126,11 +131,12 @@ public class BookingServiceImpl implements BookingService {
 
     /**
      * Check UserId with UserId of Booking are equal - if not -> Unauthorized
+     *
      * @param bookingEntity to check
      */
     private void checkIfAuthorized(BookingEntity bookingEntity) {
         UserEntity userEntity = userService.getUserEntity(userService.getUserName());
-        if(!bookingEntity.getUserId().equals(userEntity.getUserId())) {
+        if (!bookingEntity.getUserId().equals(userEntity.getUserId())) {
             log.error("User {} is not authorized to change the booking with id {}", userEntity.getUserName(), bookingEntity.getBookingId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not authorized to update this booking!");
         }
