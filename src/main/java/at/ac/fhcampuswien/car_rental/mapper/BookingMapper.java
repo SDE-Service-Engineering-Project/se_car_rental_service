@@ -37,9 +37,9 @@ public interface BookingMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "price", source = "dto.price")
     @Mapping(target = "currency", source = "dto.currency")
-    @Mapping(target = "carId", source = "carId")
+    @Mapping(target = "carId", source = "dto.carId")
     @Mapping(target = "userId", source = "userId")
-    BookingEntity toEntity(CreateBookingDTO dto, Long userId, Long carId);
+    BookingEntity toEntity(CreateBookingDTO dto, Long userId);
 
     @Mapping(target = "bookedFrom", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedFrom()))")
     @Mapping(target = "bookedUntil", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedUntil()))")

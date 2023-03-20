@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.car_rental.service.booking;
 
-import at.ac.fhcampuswien.car_rental.config.SoapAuthHandler;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
@@ -8,15 +7,11 @@ import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
-import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
 import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
-import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
-import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService;
-import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService_Service;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,12 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.xml.ws.handler.Handler;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,19 +66,17 @@ public class BookingServiceImpl implements BookingService {
 
         // Check if Car is already booked before proceeding
         List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
-        if (savedBookingEntities.size() > 0) {
-            savedBookingEntities.forEach(item -> {
-                if (createBookingDTO.bookedFrom().isAfter(item.getBookedFrom()) && createBookingDTO.bookedFrom().isBefore(item.getBookedUntil()) ||
-                        createBookingDTO.bookedUntil().isAfter(item.getBookedFrom()) && createBookingDTO.bookedUntil().isBefore(item.getBookedUntil())) {
-                    log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
-                }
-            });
-        }
+        savedBookingEntities.forEach(item -> {
+            if (!createBookingDTO.bookedFrom().isAfter(item.getBookedUntil()) && !item.getBookedFrom().isAfter(createBookingDTO.bookedUntil()) ) {
+                log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
+            }
+        });
+
 
         // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
-        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), createBookingDTO.carId());
+        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId());
         entity = bookingRepository.save(entity);
 
         return bookingMapper.toCreateBookingResponseDto(entity);
