@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 public record UpdateBookingDTO(
+        LocalDateTime bookedFrom,
         LocalDateTime bookedUntil,
         Float price,
         String currency

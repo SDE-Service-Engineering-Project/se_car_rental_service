@@ -25,6 +25,8 @@ public class BookingEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_BOOKING")
     Long bookingId;
+    @Column(name = "TST_BOOKED_FROM")
+    LocalDateTime bookedFrom;
     @Column(name = "TST_BOOKED_UNTIL")
     LocalDateTime bookedUntil;
     @Column(name = "TXT_BOOKING_STATUS")
@@ -36,6 +38,10 @@ public class BookingEntity extends BaseEntity {
     String currency;
     @Column(name = "ID_CAR")
     Long carId;
+    @ManyToOne
+    @JoinColumn(name="ID_CAR", nullable=false, insertable = false, updatable = false)
+    private CarEntity car;
+
     @Column(name = "ID_USER")
     Long userId;
 }

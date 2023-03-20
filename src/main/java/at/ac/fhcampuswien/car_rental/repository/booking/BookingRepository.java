@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
-    Optional<BookingEntity> findFirstByCarIdEqualsAndBookingStatusEquals(Long carId, BookingStatus bookingStatus);
+    List<BookingEntity> findAllByCarIdEqualsAndBookingStatusEquals(Long carId, BookingStatus bookingStatus);
     List<BookingEntity> findAllByUserIdEquals(Long userId);
 }

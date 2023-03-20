@@ -1,19 +1,17 @@
 package at.ac.fhcampuswien.car_rental.service.booking;
 
-import at.ac.fhcampuswien.car_rental.config.SoapAuthHandler;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
+import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
-import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
-import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService;
-import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService_Service;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,12 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.xml.ws.handler.Handler;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,8 +33,8 @@ public class BookingServiceImpl implements BookingService {
     BookingRepository bookingRepository;
     CarRepository carRepository;
     BookingMapper bookingMapper;
+    CarMapper carMapper;
     UserService userService;
-    CurrencyConverterService currencyConverterService;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
         UserEntity user = userService.getUserEntity(userService.getUserName());
 
         return bookingRepository.findAllByUserIdEquals(user.getUserId())
-                .stream().map(bookingMapper::toDto)
+                .stream().map(item -> bookingMapper.toDto(item, carMapper.toDto(item.getCar())))
                 .collect(Collectors.toList());
     }
 
@@ -57,12 +51,12 @@ public class BookingServiceImpl implements BookingService {
     public BookingDTO getBookingById(Long bookingId) {
         // TODO: Throw error if searching for Booking which does not belong to User?
         BookingEntity bookingEntity = getBookingEntity(bookingId);
-        return bookingMapper.toDto(bookingEntity);
+        return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
     }
 
     @Override
     @Transactional
-    public BookingDTO createBooking(CreateBookingDTO createBookingDTO) {
+    public CreateBookingResponseDTO createBooking(CreateBookingDTO createBookingDTO) {
         // Check if Car with the Id exists
         carRepository.findById(createBookingDTO.carId()).orElseThrow(() -> {
                     log.error("Could not find car with id {}, could not perform booking!", createBookingDTO.carId());
@@ -71,18 +65,21 @@ public class BookingServiceImpl implements BookingService {
         );
 
         // Check if Car is already booked before proceeding
-        Optional<BookingEntity> savedBookingEntities = bookingRepository.findFirstByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
-        if (savedBookingEntities.isPresent()) {
-            log.error("Car with the id {} is already booked!", createBookingDTO.carId());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked!");
-        }
+        List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
+        savedBookingEntities.forEach(item -> {
+            if (!createBookingDTO.bookedFrom().isAfter(item.getBookedUntil()) && !item.getBookedFrom().isAfter(createBookingDTO.bookedUntil()) ) {
+                log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
+            }
+        });
+
 
         // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
-        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), createBookingDTO.carId());
-        bookingRepository.save(entity);
+        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId());
+        entity = bookingRepository.save(entity);
 
-        return bookingMapper.toDto(entity);
+        return bookingMapper.toCreateBookingResponseDto(entity);
     }
 
     @Override
@@ -99,7 +96,7 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(bookingEntity);
 
-        return bookingMapper.toDto(bookingEntity);
+        return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
     }
 
     @Override
@@ -123,11 +120,12 @@ public class BookingServiceImpl implements BookingService {
 
     /**
      * Check UserId with UserId of Booking are equal - if not -> Unauthorized
+     *
      * @param bookingEntity to check
      */
     private void checkIfAuthorized(BookingEntity bookingEntity) {
         UserEntity userEntity = userService.getUserEntity(userService.getUserName());
-        if(!bookingEntity.getUserId().equals(userEntity.getUserId())) {
+        if (!bookingEntity.getUserId().equals(userEntity.getUserId())) {
             log.error("User {} is not authorized to change the booking with id {}", userEntity.getUserName(), bookingEntity.getBookingId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not authorized to update this booking!");
         }

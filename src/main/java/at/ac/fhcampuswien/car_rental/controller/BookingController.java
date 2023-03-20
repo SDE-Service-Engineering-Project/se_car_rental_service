@@ -3,11 +3,10 @@ package at.ac.fhcampuswien.car_rental.controller;
 
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.service.booking.BookingService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -41,7 +40,7 @@ public class BookingController {
 
     @Operation(summary = "Create a Booking")
     @PostMapping
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody CreateBookingDTO createBookingDTO) {
+    public ResponseEntity<CreateBookingResponseDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
         return new ResponseEntity<>(bookingService.createBooking(createBookingDTO), HttpStatus.CREATED);
     }
 
