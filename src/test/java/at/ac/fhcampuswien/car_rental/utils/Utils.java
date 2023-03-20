@@ -32,10 +32,8 @@ public class Utils {
     public CreateBookingDTO createBookingDTO() {
         LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
-        Float price = 20000.0f;
-        String currency = "USD";
         Long carId = 1L;
-        return new CreateBookingDTO(bookedFrom, bookedTo, price, currency, carId);
+        return new CreateBookingDTO(bookedFrom, bookedTo, carId);
     }
 
     public BookingEntity bookingEntity() {

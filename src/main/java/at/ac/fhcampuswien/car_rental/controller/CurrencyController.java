@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.car_rental.controller;
 
 
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.currency.ConvertCarPriceDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.ConvertCurrencyDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.ConvertResultDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.CurrencyDTO;
@@ -35,5 +36,10 @@ public class CurrencyController {
     @GetMapping("/convert")
     public ResponseEntity<ConvertResultDTO> convert(@RequestBody ConvertCurrencyDTO convertCurrencyDTO) {
         return ResponseEntity.ok(currencyConverterService.convert(convertCurrencyDTO));
+    }
+
+    @GetMapping("/car")
+    public ResponseEntity<ConvertResultDTO> convertCarPrice(@RequestBody ConvertCarPriceDTO convertCarPriceDTO) {
+        return ResponseEntity.ok(currencyConverterService.convertCarPrice(convertCarPriceDTO));
     }
 }

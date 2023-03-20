@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.car_rental.service.booking;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
+import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public CreateBookingResponseDTO createBooking(CreateBookingDTO createBookingDTO) {
         // Check if Car with the Id exists
-        carRepository.findById(createBookingDTO.carId()).orElseThrow(() -> {
+        CarEntity carEntity = carRepository.findById(createBookingDTO.carId()).orElseThrow(() -> {
                     log.error("Could not find car with id {}, could not perform booking!", createBookingDTO.carId());
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not find car with id " + createBookingDTO.carId());
                 }
@@ -67,16 +69,17 @@ public class BookingServiceImpl implements BookingService {
         // Check if Car is already booked before proceeding
         List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
         savedBookingEntities.forEach(item -> {
-            if (!createBookingDTO.bookedFrom().isAfter(item.getBookedUntil()) && !item.getBookedFrom().isAfter(createBookingDTO.bookedUntil()) ) {
+            if (!createBookingDTO.bookedFrom().isAfter(item.getBookedUntil()) && !item.getBookedFrom().isAfter(createBookingDTO.bookedUntil())) {
                 log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
             }
         });
 
-
         // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
-        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId());
+        long noOfDays = createBookingDTO.bookedFrom().until(createBookingDTO.bookedUntil(), ChronoUnit.DAYS);
+        // TODO: Set "USD" in application.yml as default Currency
+        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), carEntity.getPrice() * noOfDays, "USD");
         entity = bookingRepository.save(entity);
 
         return bookingMapper.toCreateBookingResponseDto(entity);
