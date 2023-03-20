@@ -5,9 +5,9 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
     List<BookingEntity> findAllByCarIdEqualsAndBookingStatusEquals(Long carId, BookingStatus bookingStatus);
     List<BookingEntity> findAllByUserIdEquals(Long userId);
+    List<BookingEntity> findAllByBookingStatusEquals(BookingStatus bookingStatus);
 }

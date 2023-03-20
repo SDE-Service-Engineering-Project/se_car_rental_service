@@ -6,7 +6,6 @@ import at.ac.fhcampuswien.car_rental.dto.currency.ConvertCurrencyDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.ConvertResultDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.CurrencyDTO;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
-import at.ac.fhcampuswien.car_rental.service.car.CarService;
 import at.ac.fhcampuswien.car_rental.soap.client.CurrencyConversionService;
 import com.sun.xml.ws.fault.ServerSOAPFaultException;
 import lombok.AccessLevel;
@@ -53,7 +52,7 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
         );
 
         return convert(
-                new ConvertCurrencyDTO(foundCarEntity.getPrice() * convertCarPriceDTO.daysToRent(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency())
+                new ConvertCurrencyDTO(foundCarEntity.getPrice(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency())
         );
     }
 

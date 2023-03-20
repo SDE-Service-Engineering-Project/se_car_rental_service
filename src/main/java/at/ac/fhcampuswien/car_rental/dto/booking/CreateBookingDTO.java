@@ -7,6 +7,8 @@ public record CreateBookingDTO(
         LocalDateTime bookedFrom,
         @NotNull(message = "No end date for booking set!")
         LocalDateTime bookedUntil,
+        @NotNull(message = "No days to rent set!")
+        Long daysToRent,
         @NotNull(message = "No car id provided!")
         Long carId
 ) {

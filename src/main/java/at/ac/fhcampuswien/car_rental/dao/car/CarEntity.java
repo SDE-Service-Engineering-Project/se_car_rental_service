@@ -10,7 +10,6 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.Set;
 
 @Entity
@@ -35,4 +34,6 @@ public class CarEntity extends BaseEntity {
     Float price;
     @Column(name = "TXT_CURRENCY")
     String currency;
+    @OneToMany(mappedBy="car")
+    Set<BookingEntity> bookings;
 }

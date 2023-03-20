@@ -31,3 +31,5 @@ jwt:
 
 currency-converter:
   wsdl: http://localhost:8000/?wsdl
+  # Needs also be changed in flyway migration script -> Cars will be saved in USD by default
+  default-currency: 'USD'

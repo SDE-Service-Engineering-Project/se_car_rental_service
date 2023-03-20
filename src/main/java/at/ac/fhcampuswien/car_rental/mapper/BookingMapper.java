@@ -1,8 +1,6 @@
 package at.ac.fhcampuswien.car_rental.mapper;
 
-import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
-import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
@@ -12,8 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.math.BigInteger;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -43,8 +39,6 @@ public interface BookingMapper {
 
     @Mapping(target = "bookedFrom", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedFrom()))")
     @Mapping(target = "bookedUntil", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedUntil()))")
-    @Mapping(target = "price", expression = "java(Objects.requireNonNullElse(dto.price(), entity.getPrice()))")
-    @Mapping(target = "currency", expression = "java(Objects.requireNonNullElse(dto.currency(), entity.getCurrency()))")
     void updateEntity(@MappingTarget BookingEntity entity, UpdateBookingDTO dto);
 
     CreateBookingResponseDTO toCreateBookingResponseDto(BookingEntity entity);

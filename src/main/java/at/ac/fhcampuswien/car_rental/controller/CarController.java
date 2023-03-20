@@ -1,10 +1,9 @@
 package at.ac.fhcampuswien.car_rental.controller;
 
+import at.ac.fhcampuswien.car_rental.dto.car.AvailabilityDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.service.car.CarService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,5 +31,10 @@ public class CarController {
     @GetMapping("/{carId}")
     public ResponseEntity<CarDTO> getCarById(@PathVariable Long carId) {
         return ResponseEntity.ok(carService.getCarById(carId));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<CarDTO>> getAvailableCars(@RequestBody AvailabilityDTO availabilityDTO) {
+        return ResponseEntity.ok(carService.getAvailableCars(availabilityDTO));
     }
 }
