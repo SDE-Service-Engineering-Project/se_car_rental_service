@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.car_rental.controller;
 
-import at.ac.fhcampuswien.car_rental.dto.car.AvailabilityDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.service.car.CarService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,7 @@ public class CarController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<CarDTO>> getAvailableCars(@RequestBody AvailabilityDTO availabilityDTO) {
-        return ResponseEntity.ok(carService.getAvailableCars(availabilityDTO));
+    public ResponseEntity<List<CarDTO>> getAvailableCars(@RequestParam Long neededFrom, @RequestParam Long neededTo) {
+        return ResponseEntity.ok(carService.getAvailableCars(neededFrom, neededTo));
     }
 }

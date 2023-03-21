@@ -2,7 +2,6 @@ package at.ac.fhcampuswien.car_rental.service.currency_converter;
 
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.currency.ConvertCarPriceDTO;
-import at.ac.fhcampuswien.car_rental.dto.currency.ConvertCurrencyDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.ConvertResultDTO;
 import at.ac.fhcampuswien.car_rental.dto.currency.CurrencyDTO;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
@@ -31,12 +30,12 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
     }
 
     @Override
-    public ConvertResultDTO convert(ConvertCurrencyDTO convertCurrencyDTO) {
+    public ConvertResultDTO convert(Float amount, String fromCurrency, String toCurrency) {
         try {
-            Float result = currencyConversionService.convert(convertCurrencyDTO.amount(), convertCurrencyDTO.fromCurrency(), convertCurrencyDTO.toCurrency());
-            log.info("Converted {} {} to {} {} via SOAP", convertCurrencyDTO.amount(), convertCurrencyDTO.fromCurrency(), result, convertCurrencyDTO.toCurrency());
+            Float result = currencyConversionService.convert(amount, fromCurrency, toCurrency);
+            log.info("Converted {} {} to {} {} via SOAP", amount, fromCurrency, result, toCurrency);
 
-            return new ConvertResultDTO(result, convertCurrencyDTO.toCurrency());
+            return new ConvertResultDTO(result, toCurrency);
         } catch (ServerSOAPFaultException exception) {
             if (exception.getMessage().contains("is not supported")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided Currencies not supported");
@@ -52,7 +51,7 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
         );
 
         return convert(
-                new ConvertCurrencyDTO(foundCarEntity.getPrice(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency())
+                foundCarEntity.getPrice(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency()
         );
     }
 
