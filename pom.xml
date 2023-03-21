@@ -19,7 +19,6 @@
     <properties>
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-        <currency.converter.wsdl.url>http://localhost:8000/?wsdl</currency.converter.wsdl.url>
     </properties>
 
     <dependencies>
@@ -143,7 +142,7 @@
                 </executions>
                 <configuration>
                     <wsdlUrls>
-                        <wsdlUrl>${currency.converter.wsdl.url}</wsdlUrl>
+                        <wsdlUrl>${CURRENCY_CONVERTER_URL}</wsdlUrl>
                     </wsdlUrls>
                     <packageName>at.ac.fhcampuswien.car_rental.soap.client</packageName>
                     <sourceDestDir>
@@ -174,6 +173,14 @@
                             <version>0.2.0</version>
                         </dependency>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>at.ac.fhcampuswien.car_rental.SeCarRentalServiceApplication</mainClass>
+                    <layout>JAR</layout>
                 </configuration>
             </plugin>
         </plugins>
