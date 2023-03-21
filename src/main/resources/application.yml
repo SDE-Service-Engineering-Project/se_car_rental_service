@@ -1,7 +1,7 @@
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://${POSTGRES_SERVICE_NAME:localhost}:5432/postgres
     driver-class-name: org.postgresql.Driver
     username: admin
     password: 'admin'
@@ -30,4 +30,4 @@ jwt:
     key: classpath:rsaKey/rsa.key
 
 currency-converter:
-  wsdl: http://localhost:8000/?wsdl
+  wsdl: ${CURRENCY_CONVERTER_URL:http://169.51.206.49:32767/?wsdl}
