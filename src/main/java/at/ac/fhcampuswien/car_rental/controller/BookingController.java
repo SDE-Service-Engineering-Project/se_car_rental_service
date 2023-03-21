@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.service.booking.BookingService;
+import at.ac.fhcampuswien.car_rental.utils.LocalDateUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -41,12 +44,14 @@ public class BookingController {
     @Operation(summary = "Create a Booking")
     @PostMapping
     public ResponseEntity<CreateBookingResponseDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
+        LocalDateUtils.validateTimespan(Objects.requireNonNullElse(createBookingDTO.bookedFrom(), LocalDateTime.now()), createBookingDTO.bookedUntil());
         return new ResponseEntity<>(bookingService.createBooking(createBookingDTO), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a Booking")
     @PutMapping("/{bookingId}")
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody UpdateBookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Valid @RequestBody UpdateBookingDTO bookingDTO) {
+        LocalDateUtils.validateTimespan(bookingDTO.bookedFrom(), bookingDTO.bookedUntil());
         return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO));
     }
 

@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +41,7 @@ public class CarServiceImplTest {
                 .thenReturn(bookingEntity);
         Mockito.when(carRepository.findAll()).thenReturn(carEntities);
 
-        List<CarDTO> result = carService.getAvailableCars(bookedFrom.toEpochSecond(ZoneOffset.UTC), bookedTo.toEpochSecond(ZoneOffset.UTC));
+        List<CarDTO> result = carService.getAvailableCars(bookedFrom, bookedTo);
 
         Mockito.verify(carRepository, Mockito.times(1)).findAll();
         Assertions.assertEquals(carEntities.size(), result.size());
@@ -59,7 +58,7 @@ public class CarServiceImplTest {
         Mockito.when(carRepository.findByCarIdNotIn(notAvailableCarId))
                 .thenReturn(List.of(Utils.carEntity()));
 
-        List<CarDTO> result = carService.getAvailableCars(bookedFrom.toEpochSecond(ZoneOffset.UTC), bookedTo.toEpochSecond(ZoneOffset.UTC));
+        List<CarDTO> result = carService.getAvailableCars(bookedFrom, bookedTo);
 
         Mockito.verify(carRepository, Mockito.times(1)).findByCarIdNotIn(notAvailableCarId);
         Assertions.assertEquals(1, result.size());

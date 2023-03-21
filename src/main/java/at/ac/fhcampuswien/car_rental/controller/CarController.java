@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.car_rental.controller;
 
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.service.car.CarService;
+import at.ac.fhcampuswien.car_rental.utils.LocalDateUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,9 @@ public class CarController {
 
     @GetMapping("/available")
     public ResponseEntity<List<CarDTO>> getAvailableCars(@RequestParam Long neededFrom, @RequestParam Long neededTo) {
-        return ResponseEntity.ok(carService.getAvailableCars(neededFrom, neededTo));
+        LocalDateTime neededFromDate = LocalDateUtils.convertLongToLocalDateTime(neededFrom);
+        LocalDateTime neededToDate = LocalDateUtils.convertLongToLocalDateTime(neededTo);
+        LocalDateUtils.validateTimespan(neededFromDate, neededToDate);
+        return ResponseEntity.ok(carService.getAvailableCars(neededFromDate, neededToDate));
     }
 }
