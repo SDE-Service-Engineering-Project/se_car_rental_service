@@ -12,3 +12,11 @@ It is important to generate the sources first (for the SOAP Client Stub) before 
 
 To build the application locally, add the following environment variable should be set in your environment:
 - `CURRENCY_CONVERTER_URL=http://169.51.206.49:32767/?wsdl`
+
+  To recreate the database, run the following commands:
+- `ibmcloud login`
+- `kubectl delete services/postgres`
+- `kubectl delete deployment/postgres`
+- `kubectl delete pvc/postgres-pv-claim`
+- `kubectl delete pv/postgres-pv`
+- `kubectl apply -f ./kubernetes/db`
