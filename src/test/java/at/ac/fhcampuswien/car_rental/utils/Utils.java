@@ -5,7 +5,6 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
-import at.ac.fhcampuswien.car_rental.dto.car.AvailabilityDTO;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
@@ -142,15 +141,7 @@ public class Utils {
         return userEntity;
     }
 
-    public AvailabilityDTO availabilityDTO() {
-        LocalDateTime neededFrom = LocalDateTime.parse("08-03-2023 00:00", formatter);
-        LocalDateTime neededTo = LocalDateTime.parse("10-03-2023 00:00", formatter);
-        return new AvailabilityDTO(neededFrom, neededTo);
-    }
-
-    public AvailabilityDTO availabilityDTOButUnavailable() {
-        LocalDateTime neededFrom = LocalDateTime.parse("28-02-2023 00:00", formatter);
-        LocalDateTime neededTo = LocalDateTime.parse("03-03-2023 00:00", formatter);
-        return new AvailabilityDTO(neededFrom, neededTo);
+    public LocalDateTime getLocalDateTime(String day, String month) {
+        return LocalDateTime.parse(day + "-" + month + "-2023 00:00", formatter);
     }
 }

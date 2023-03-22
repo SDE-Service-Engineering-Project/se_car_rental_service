@@ -3,7 +3,6 @@ package at.ac.fhcampuswien.car_rental.service.car;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
-import at.ac.fhcampuswien.car_rental.dto.car.AvailabilityDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,12 +43,17 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDTO> getAvailableCars(AvailabilityDTO availabilityDTO) {
+    public List<CarDTO> getAvailableCars(LocalDateTime neededFrom, LocalDateTime neededTo) {
         List<BookingEntity> allOpenBookings = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED);
 
         // In that List: All Cars, that are not available in this timespan
         List<Long> carIds = allOpenBookings.stream()
-                .filter(item -> LocalDateUtils.isOverlapping(availabilityDTO.neededFrom(), availabilityDTO.neededTo(), item.getBookedFrom(), item.getBookedUntil()))
+                .filter(item -> LocalDateUtils.isOverlapping(
+                        neededFrom,
+                        neededTo,
+                        item.getBookedFrom(),
+                        item.getBookedUntil())
+                )
                 .map(BookingEntity::getCarId)
                 .collect(Collectors.toList());
 
