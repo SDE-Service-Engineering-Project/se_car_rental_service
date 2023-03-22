@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
+import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
 import at.ac.fhcampuswien.car_rental.utils.Utils;
@@ -27,6 +28,8 @@ public class CarServiceImplTest {
     BookingRepository bookingRepository;
     @Mock
     CarRepository carRepository;
+    @Mock
+    CarMapper carMapper;
     @InjectMocks
     CarServiceImpl carService;
 
