@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.car_rental.service.booking;
 
+import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
@@ -11,6 +12,6 @@ public interface BookingService {
     List<BookingDTO> getMyBookings();
     BookingDTO getBookingById(Long bookingId);
     CreateBookingResponseDTO createBooking(CreateBookingDTO createBookingDTO);
-    BookingDTO updateBooking(Long bookingId, UpdateBookingDTO bookingDTO);
+    BookingEntity updateBooking(Long bookingId, UpdateBookingDTO bookingDTO);
     void expireBooking(Long bookingId);
 }

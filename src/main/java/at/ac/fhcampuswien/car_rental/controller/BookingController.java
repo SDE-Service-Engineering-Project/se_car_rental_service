@@ -1,10 +1,13 @@
 package at.ac.fhcampuswien.car_rental.controller;
 
 
+import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
+import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
+import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.service.booking.BookingService;
 import at.ac.fhcampuswien.car_rental.utils.LocalDateUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +31,8 @@ import java.util.Objects;
 @Log4j2
 public class BookingController {
     BookingService bookingService;
+    CarMapper carMapper;
+    BookingMapper bookingMapper;
 
     @Operation(summary = "Get all Bookings associated with the user")
     @GetMapping
@@ -52,7 +57,8 @@ public class BookingController {
     @PutMapping("/{bookingId}")
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @Valid @RequestBody UpdateBookingDTO bookingDTO) {
         LocalDateUtils.validateTimespan(bookingDTO.bookedFrom(), bookingDTO.bookedUntil());
-        return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO));
+        BookingEntity bookingEntity = bookingService.updateBooking(bookingId, bookingDTO);
+        return ResponseEntity.ok(bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar())));
     }
 
     @Operation(summary = "Expire a Booking")

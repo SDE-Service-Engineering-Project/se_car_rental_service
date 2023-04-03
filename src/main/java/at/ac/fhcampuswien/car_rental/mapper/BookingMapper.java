@@ -4,11 +4,9 @@ import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
-import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,10 +34,6 @@ public interface BookingMapper {
     @Mapping(target = "carId", source = "dto.carId")
     @Mapping(target = "userId", source = "userId")
     BookingEntity toEntity(CreateBookingDTO dto, Long userId, Float price, String currency);
-
-    @Mapping(target = "bookedFrom", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedFrom()))")
-    @Mapping(target = "bookedUntil", expression = "java(Objects.requireNonNullElse(dto.bookedUntil(), entity.getBookedUntil()))")
-    void updateEntity(@MappingTarget BookingEntity entity, UpdateBookingDTO dto);
 
     CreateBookingResponseDTO toCreateBookingResponseDto(BookingEntity entity);
 }

@@ -4,7 +4,10 @@ import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
+import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
@@ -28,6 +31,12 @@ public class Utils {
         carEntity.setVersion(0);
 
         return carEntity;
+    }
+
+    public CarDTO carDTO() {
+        CarEntity carEntity = carEntity();
+
+        return new CarDTO(carEntity.getCarId(), carEntity.getCreatedOn(), carEntity.getBrand(), carEntity.getModel(), carEntity.getConstructionYear(), carEntity.getPrice(), carEntity.getCurrency());
     }
 
     public CarEntity secondCarEntity() {
@@ -89,6 +98,40 @@ public class Utils {
         return bookingEntity;
     }
 
+    public BookingEntity bookingEntityWithCar() {
+        BookingEntity bookingEntity = new BookingEntity();
+
+        bookingEntity.setBookingId(1L);
+        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setCurrency("USD");
+        LocalDateTime bookedFrom = LocalDateTime.parse("05-03-2023 13:00", formatter);
+        LocalDateTime bookedTo = LocalDateTime.parse("07-03-2023 13:00", formatter);
+        bookingEntity.setBookedFrom(bookedFrom);
+        bookingEntity.setBookedUntil(bookedTo);
+        bookingEntity.setBookingStatus(BookingStatus.BOOKED);
+        bookingEntity.setUserId(1L);
+        bookingEntity.setCar(carEntity());
+        bookingEntity.setCarId(bookingEntity.getCar().getCarId());
+
+        return bookingEntity;
+    }
+
+    public BookingDTO bookingDTOFromEntityWithCar() {
+        BookingEntity bookingEntity = bookingEntity();
+
+        return new BookingDTO(
+                bookingEntity.getBookingId(),
+                bookingEntity.getCreatedOn(),
+                bookingEntity.getBookedFrom(),
+                bookingEntity.getBookedUntil(),
+                bookingEntity.getBookingStatus().toString(),
+                bookingEntity.getPrice(),
+                bookingEntity.getCurrency(),
+                carDTO(),
+                bookingEntity.getUserId()
+        );
+    }
+
     public List<BookingEntity> bookingEntitiesAsList() {
         return List.of(bookingEntity(), secondBookingEntity());
     }
@@ -127,10 +170,38 @@ public class Utils {
         return bookingEntity;
     }
 
+    public UpdateBookingDTO updateBookingDTO() {
+        return new UpdateBookingDTO(
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(5)
+        );
+    }
+
+    public UpdateBookingDTO updateBookingPastDTO() {
+        return new UpdateBookingDTO(
+                null,
+                LocalDateTime.now().minusDays(2)
+        );
+    }
+
     public UserEntity userEntity() {
         UserEntity userEntity = new UserEntity();
 
         userEntity.setUserId(1L);
+        userEntity.setUserName("user");
+        userEntity.setPassword("password");
+        userEntity.setFirstName("first");
+        userEntity.setLastName("last");
+        userEntity.setCreatedOn(LocalDateTime.now());
+        userEntity.setVersion(0);
+
+        return userEntity;
+    }
+
+    public UserEntity secondUserEntity() {
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setUserId(2L);
         userEntity.setUserName("user");
         userEntity.setPassword("password");
         userEntity.setFirstName("first");

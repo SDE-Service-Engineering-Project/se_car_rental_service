@@ -149,7 +149,7 @@
                 </executions>
                 <configuration>
                     <wsdlUrls>
-                        <wsdlUrl>${CURRENCY_CONVERTER_URL}</wsdlUrl>
+                        <wsdlUrl>http://localhost:8000/?wsdl</wsdlUrl>
                     </wsdlUrls>
                     <packageName>at.ac.fhcampuswien.car_rental.soap.client</packageName>
                     <sourceDestDir>
@@ -209,6 +209,7 @@
                         <configuration>
                             <formats>
                                 <format>XML</format>
+                                <format>HTML</format>
                             </formats>
                         </configuration>
                     </execution>
