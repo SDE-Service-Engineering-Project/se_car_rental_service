@@ -22,8 +22,8 @@ public class LocalDateUtilsTest {
     public void should_return_true_because_overlapping() {
         LocalDateTime startA = LocalDateTime.now().minusDays(5);
         LocalDateTime endA = LocalDateTime.now().minusDays(2);
-        LocalDateTime startB = LocalDateTime.now().minusDays(2);
-        LocalDateTime endB = LocalDateTime.now().minusDays(3);
+        LocalDateTime startB = LocalDateTime.now().minusDays(4);
+        LocalDateTime endB = LocalDateTime.now().minusDays(1);
 
         boolean result = LocalDateUtils.isOverlapping(startA, endA, startB, endB);
 

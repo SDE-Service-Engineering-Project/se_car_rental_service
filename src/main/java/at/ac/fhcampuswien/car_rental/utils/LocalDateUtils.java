@@ -20,7 +20,7 @@ public class LocalDateUtils {
     }
 
     public static LocalDateTime convertLongToLocalDateTime(Long toConvert) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(toConvert), ZoneId.systemDefault());
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(toConvert), ZoneId.of("Europe/Paris"));
     }
 
     public static void validateTimespan(LocalDateTime start, LocalDateTime end) {
