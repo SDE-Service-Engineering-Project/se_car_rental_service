@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,20 +88,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO updateBooking(Long bookingId, UpdateBookingDTO bookingDTO) {
+    public BookingEntity updateBooking(Long bookingId, UpdateBookingDTO bookingDTO) {
         BookingEntity bookingEntity = getBookingEntity(bookingId);
 
         checkIfAuthorized(bookingEntity);
 
         // TODO Maybe call Currency Converter here
-        bookingMapper.updateEntity(bookingEntity, bookingDTO);
+        bookingEntity.setBookedFrom(Objects.requireNonNullElse(bookingDTO.bookedFrom(), bookingEntity.getBookedFrom()));
+        bookingEntity.setBookedUntil(Objects.requireNonNullElse(bookingDTO.bookedUntil(), bookingEntity.getBookedUntil()));
         if (bookingEntity.getBookedUntil().isBefore(LocalDateTime.now())) {
             bookingEntity.setBookingStatus(BookingStatus.EXPIRED);
         }
 
         bookingRepository.save(bookingEntity);
 
-        return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
+        return bookingEntity;
     }
 
     @Override

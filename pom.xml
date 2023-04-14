@@ -209,10 +209,17 @@
                         <configuration>
                             <formats>
                                 <format>XML</format>
+                                <format>HTML</format>
                             </formats>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>at/ac/fhcampuswien/car_rental/soap/**/*</exclude>
+                        <exclude>at/ac/fhcampuswien/car_rental/mapper/**/*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

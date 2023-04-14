@@ -17,9 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -34,7 +36,41 @@ public class CarServiceImplTest {
     CarServiceImpl carService;
 
     @Test
-    public void should_show_available_car() {
+    void should_get_all_cars() {
+        List<CarEntity> carEntities = Utils.carEntitiesAsList();
+        Mockito.when(carRepository.findAll()).thenReturn(carEntities);
+
+        List<CarDTO> carDtos = carService.getAllCars();
+
+        Assertions.assertEquals(carEntities.size(), carDtos.size());
+    }
+
+    @Test
+    void should_get_car_by_id() {
+        CarEntity carEntity = Utils.carEntity();
+        CarDTO carDTO = Utils.carDTO();
+        Mockito.when(carRepository.findById(carEntity.getCarId())).thenReturn(Optional.ofNullable(carEntity));
+        Mockito.when(carMapper.toDto(carEntity)).thenReturn(carDTO);
+
+        CarDTO result = carService.getCarById(carEntity.getCarId());
+
+        Assertions.assertEquals(carEntity.getCarId(), result.carId());
+    }
+
+    @Test
+    void should_throw_error_on_wrong_id() {
+        Long carId = 1L;
+        Mockito.when(carRepository.findById(carId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    carService.getCarById(carId);
+                }
+        );
+    }
+
+    @Test
+    void should_show_available_car() {
         List<CarEntity> carEntities = Utils.carEntitiesAsList();
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
         LocalDateTime bookedFrom = Utils.getLocalDateTime("08", "03");
@@ -51,7 +87,7 @@ public class CarServiceImplTest {
     }
 
     @Test
-    public void should_not_show_available_car() {
+    void should_not_show_available_car() {
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
         List<Long> notAvailableCarId = List.of(Utils.secondBookingEntity().getCarId());
         LocalDateTime bookedFrom = Utils.getLocalDateTime("28", "02");

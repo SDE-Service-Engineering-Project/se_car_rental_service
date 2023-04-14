@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.car_rental.utils;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -7,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+@UtilityClass
 public class LocalDateUtils {
 
     /**
@@ -18,7 +20,7 @@ public class LocalDateUtils {
     }
 
     public static LocalDateTime convertLongToLocalDateTime(Long toConvert) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(toConvert), ZoneId.systemDefault());
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(toConvert), ZoneId.of("Europe/Paris"));
     }
 
     public static void validateTimespan(LocalDateTime start, LocalDateTime end) {

@@ -1,11 +1,13 @@
 package at.ac.fhcampuswien.car_rental.service.booking;
 
 
-import at.ac.fhcampuswien.car_rental.AbstractIT;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
+import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
+import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
 import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
@@ -14,15 +16,13 @@ import at.ac.fhcampuswien.car_rental.service.user.UserService;
 import at.ac.fhcampuswien.car_rental.utils.Utils;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class BookingServiceImplTest {
     BookingServiceImpl bookingService;
 
     @Test
-    public void should_create_booking() {
+    void should_create_booking() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -64,7 +64,23 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_create_booking_because_overlap() {
+    void should_not_create_booking_because_wrong_carid() {
+        // Arrange
+        CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
+
+        Mockito.when(carRepository.findById(createBookingDTO.carId()))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    bookingService.createBooking(createBookingDTO);
+                }
+        );
+    }
+
+    @Test
+    void should_not_create_booking_because_overlap() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -81,7 +97,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_create_booking_because_overlap_2() {
+    void should_not_create_booking_because_overlap_2() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -95,5 +111,113 @@ public class BookingServiceImplTest {
                     bookingService.createBooking(createBookingDTO);
                 }
         );
+    }
+
+    @Test
+    void should_get_booking_by_id() {
+        BookingEntity bookingEntity = Utils.bookingEntityWithCar();
+        CarDTO carDTO = Utils.carDTO();
+        BookingDTO bookingDTO = Utils.bookingDTOFromEntityWithCar();
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId()))
+                .thenReturn(Optional.of(bookingEntity));
+        Mockito.when(carMapper.toDto(bookingEntity.getCar()))
+                .thenReturn(carDTO);
+        Mockito.when(bookingMapper.toDto(bookingEntity, carDTO))
+                .thenReturn(bookingDTO);
+
+        BookingDTO result = bookingService.getBookingById(bookingEntity.getBookingId());
+
+        Assertions.assertEquals(bookingEntity.getBookingId(), result.bookingId());
+        Mockito.verify(bookingRepository, Mockito.times(1)).findById(bookingEntity.getBookingId());
+    }
+
+    @Test
+    void should_throw_error_on_wrong_booking_fetch() {
+        Long bookingId = 2L;
+        Mockito.when(bookingRepository.findById(bookingId))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    bookingService.getBookingById(bookingId);
+                }
+        );
+    }
+
+    @Test
+    void should_get_booking_by_user() {
+        UserEntity userEntity = Utils.userEntity();
+        BookingEntity bookingEntity = Utils.bookingEntityWithCar();
+        CarDTO carDTO = Utils.carDTO();
+        BookingDTO bookingDTO = Utils.bookingDTOFromEntityWithCar();
+
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+        Mockito.when(bookingRepository.findAllByUserIdEquals(userEntity.getUserId())).thenReturn(List.of(bookingEntity));
+        Mockito.when(carMapper.toDto(bookingEntity.getCar()))
+                .thenReturn(carDTO);
+        Mockito.when(bookingMapper.toDto(bookingEntity, carDTO))
+                .thenReturn(bookingDTO);
+
+        List<BookingDTO> bookingDTOs = bookingService.getMyBookings();
+
+        Assertions.assertEquals(1, bookingDTOs.size());
+        Assertions.assertEquals(bookingEntity.getBookingId(), bookingDTOs.get(0).bookingId());
+    }
+
+    @Test
+    void should_not_update_and_throw_error_because_wrong_user() {
+        BookingEntity bookingEntity = Utils.bookingEntity(); // Has UserId 1 saved as owner
+        UserEntity userEntity = Utils.secondUserEntity(); // Has UserId 2
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId())).thenReturn(Optional.of(bookingEntity));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    bookingService.updateBooking(bookingEntity.getBookingId(), Mockito.any());
+                }
+        );
+    }
+
+    @Test
+    void should_update_booking() {
+        BookingEntity bookingEntity = Utils.bookingEntity();
+        UserEntity userEntity = Utils.userEntity();
+        UpdateBookingDTO updateBookingDTO = Utils.updateBookingDTO();
+        CarDTO carDTO = Utils.carDTO();
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId())).thenReturn(Optional.of(bookingEntity));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+
+        BookingEntity result = bookingService.updateBooking(bookingEntity.getBookingId(), updateBookingDTO);
+
+        Assertions.assertEquals(BookingStatus.BOOKED, result.getBookingStatus());
+    }
+
+    @Test
+    void should_update_booking_and_expire() {
+        BookingEntity bookingEntity = Utils.bookingEntity();
+        UserEntity userEntity = Utils.userEntity();
+        UpdateBookingDTO updateBookingDTO = Utils.updateBookingPastDTO();
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId())).thenReturn(Optional.of(bookingEntity));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+
+        BookingEntity result = bookingService.updateBooking(bookingEntity.getBookingId(), updateBookingDTO);
+
+        Assertions.assertEquals(BookingStatus.EXPIRED, result.getBookingStatus());
+    }
+
+    @Test
+    void should_expire_booking_with_no_error() {
+        UserEntity userEntity = Utils.userEntity();
+        BookingEntity bookingEntity = Utils.bookingEntity();
+        bookingEntity.setUserId(userEntity.getUserId());
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId())).thenReturn(Optional.of(bookingEntity));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+
+        bookingService.expireBooking(bookingEntity.getBookingId());
     }
 }
