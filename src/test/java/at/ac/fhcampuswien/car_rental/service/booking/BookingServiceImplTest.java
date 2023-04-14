@@ -46,7 +46,7 @@ public class BookingServiceImplTest {
     BookingServiceImpl bookingService;
 
     @Test
-    public void should_create_booking() {
+    void should_create_booking() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -64,7 +64,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_create_booking_because_wrong_carid() {
+    void should_not_create_booking_because_wrong_carid() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -80,7 +80,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_create_booking_because_overlap() {
+    void should_not_create_booking_because_overlap() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -97,7 +97,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_create_booking_because_overlap_2() {
+    void should_not_create_booking_because_overlap_2() {
         // Arrange
         CreateBookingDTO createBookingDTO = Utils.createBookingDTO();
 
@@ -114,7 +114,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_get_booking_by_id() {
+    void should_get_booking_by_id() {
         BookingEntity bookingEntity = Utils.bookingEntityWithCar();
         CarDTO carDTO = Utils.carDTO();
         BookingDTO bookingDTO = Utils.bookingDTOFromEntityWithCar();
@@ -133,7 +133,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_throw_error_on_wrong_booking_fetch() {
+    void should_throw_error_on_wrong_booking_fetch() {
         Long bookingId = 2L;
         Mockito.when(bookingRepository.findById(bookingId))
                 .thenReturn(Optional.empty());
@@ -146,7 +146,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_get_booking_by_user() {
+    void should_get_booking_by_user() {
         UserEntity userEntity = Utils.userEntity();
         BookingEntity bookingEntity = Utils.bookingEntityWithCar();
         CarDTO carDTO = Utils.carDTO();
@@ -166,7 +166,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_not_update_and_throw_error_because_wrong_user() {
+    void should_not_update_and_throw_error_because_wrong_user() {
         BookingEntity bookingEntity = Utils.bookingEntity(); // Has UserId 1 saved as owner
         UserEntity userEntity = Utils.secondUserEntity(); // Has UserId 2
 
@@ -181,7 +181,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_update_booking() {
+    void should_update_booking() {
         BookingEntity bookingEntity = Utils.bookingEntity();
         UserEntity userEntity = Utils.userEntity();
         UpdateBookingDTO updateBookingDTO = Utils.updateBookingDTO();
@@ -196,7 +196,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_update_booking_and_expire() {
+    void should_update_booking_and_expire() {
         BookingEntity bookingEntity = Utils.bookingEntity();
         UserEntity userEntity = Utils.userEntity();
         UpdateBookingDTO updateBookingDTO = Utils.updateBookingPastDTO();
@@ -210,7 +210,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void should_expire_booking_with_no_error() {
+    void should_expire_booking_with_no_error() {
         UserEntity userEntity = Utils.userEntity();
         BookingEntity bookingEntity = Utils.bookingEntity();
         bookingEntity.setUserId(userEntity.getUserId());

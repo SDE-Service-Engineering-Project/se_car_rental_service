@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 public class LocalDateUtilsTest {
 
     @Test
-    public void should_return_true_because_overlapping() {
+    void should_return_true_because_overlapping() {
         LocalDateTime startA = LocalDateTime.now().minusDays(5);
         LocalDateTime endA = LocalDateTime.now().minusDays(2);
         LocalDateTime startB = LocalDateTime.now().minusDays(4);
@@ -31,7 +31,7 @@ public class LocalDateUtilsTest {
     }
 
     @Test
-    public void should_return_false_because_not_overlapping() {
+    void should_return_false_because_not_overlapping() {
         LocalDateTime startA = LocalDateTime.now().minusDays(5);
         LocalDateTime endA = LocalDateTime.now().minusDays(3);
         LocalDateTime startB = LocalDateTime.now().minusDays(2);
@@ -43,7 +43,7 @@ public class LocalDateUtilsTest {
     }
 
     @Test
-    public void should_convert_long_to_datetime() {
+    void should_convert_long_to_datetime() {
         Long toConvert = 1680559200000L;
         LocalDateTime expectedLocalDateTime = LocalDateTime.of(
                 LocalDate.of(2023, 4, 4),
@@ -56,7 +56,7 @@ public class LocalDateUtilsTest {
     }
 
     @Test
-    public void should_not_throw_error_to_valid_timestamp() {
+    void should_not_throw_error_to_valid_timestamp() {
         LocalDateTime start = LocalDateTime.now().minusDays(5);
         LocalDateTime end = LocalDateTime.now().minusDays(3);
 
@@ -68,7 +68,7 @@ public class LocalDateUtilsTest {
     }
 
     @Test
-    public void should_throw_error_to_invalid_timestamp() {
+    void should_throw_error_to_invalid_timestamp() {
         LocalDateTime start = LocalDateTime.now().minusDays(5);
         LocalDateTime end = LocalDateTime.now().minusDays(6);
 

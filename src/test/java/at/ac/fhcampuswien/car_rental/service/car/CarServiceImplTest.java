@@ -36,7 +36,7 @@ public class CarServiceImplTest {
     CarServiceImpl carService;
 
     @Test
-    public void should_get_all_cars() {
+    void should_get_all_cars() {
         List<CarEntity> carEntities = Utils.carEntitiesAsList();
         Mockito.when(carRepository.findAll()).thenReturn(carEntities);
 
@@ -46,7 +46,7 @@ public class CarServiceImplTest {
     }
 
     @Test
-    public void should_get_car_by_id() {
+    void should_get_car_by_id() {
         CarEntity carEntity = Utils.carEntity();
         CarDTO carDTO = Utils.carDTO();
         Mockito.when(carRepository.findById(carEntity.getCarId())).thenReturn(Optional.ofNullable(carEntity));
@@ -58,7 +58,7 @@ public class CarServiceImplTest {
     }
 
     @Test
-    public void should_throw_error_on_wrong_id() {
+    void should_throw_error_on_wrong_id() {
         Long carId = 1L;
         Mockito.when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
@@ -70,7 +70,7 @@ public class CarServiceImplTest {
     }
 
     @Test
-    public void should_show_available_car() {
+    void should_show_available_car() {
         List<CarEntity> carEntities = Utils.carEntitiesAsList();
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
         LocalDateTime bookedFrom = Utils.getLocalDateTime("08", "03");
@@ -87,7 +87,7 @@ public class CarServiceImplTest {
     }
 
     @Test
-    public void should_not_show_available_car() {
+    void should_not_show_available_car() {
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
         List<Long> notAvailableCarId = List.of(Utils.secondBookingEntity().getCarId());
         LocalDateTime bookedFrom = Utils.getLocalDateTime("28", "02");

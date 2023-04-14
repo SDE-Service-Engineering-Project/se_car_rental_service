@@ -34,7 +34,7 @@ public class CurrencyConverterServiceImplTest {
     CurrencyConverterServiceImpl currencyConverterService;
 
     @Test
-    public void should_convert_currency() {
+    void should_convert_currency() {
         Float amount = 200.0f;
         String fromCurrency = "USD";
         String toCurrenty = "EUR";
@@ -51,7 +51,7 @@ public class CurrencyConverterServiceImplTest {
     }
 
     @Test
-    public void should_throw_error_if_something_wrong() {
+    void should_throw_error_if_something_wrong() {
         Float amount = 200.0f;
         String fromCurrency = "USD";
         String toCurrenty = "EU";
@@ -67,7 +67,7 @@ public class CurrencyConverterServiceImplTest {
     }
 
     @Test
-    public void should_get_all_currencies() {
+    void should_get_all_currencies() {
         List<String> listOfCurrencies = List.of("EUR", "USD", "ZAR");
 
         StringArray array = Mockito.mock(StringArray.class);
@@ -81,7 +81,7 @@ public class CurrencyConverterServiceImplTest {
     }
 
     @Test
-    public void should_convert_car_price() {
+    void should_convert_car_price() {
         CarEntity carEntity = Utils.carEntity();
         ConvertCarPriceDTO convertCarPriceDTO = new ConvertCarPriceDTO(carEntity.getCarId(), "EUR");
         float expectedResult = carEntity.getPrice() + 10.0f;
@@ -98,7 +98,7 @@ public class CurrencyConverterServiceImplTest {
     }
 
     @Test
-    public void should_not_convert_non_existing_car() {
+    void should_not_convert_non_existing_car() {
         ConvertCarPriceDTO convertCarPriceDTO = new ConvertCarPriceDTO(2L, "EUR");
 
         Mockito.when(carRepository.findById(convertCarPriceDTO.carId()))
