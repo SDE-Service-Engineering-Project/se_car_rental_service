@@ -1,7 +1,5 @@
 package at.ac.fhcampuswien.car_rental.dto.booking;
 
-import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
-
 import java.time.LocalDateTime;
 
 public record CreateBookingResponseDTO(
@@ -12,6 +10,8 @@ public record CreateBookingResponseDTO(
         String bookingStatus,
         Float price,
         String currency,
+        Float priceSaved,
+        String currencySaved,
         Long carId,
         Long userId
 ) {

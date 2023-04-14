@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
@@ -31,7 +32,7 @@ public class CarEntity extends BaseEntity {
     @Column(name = "NUM_CONSTRUCTION_YEAR")
     Integer constructionYear;
     @Column(name = "BI_PRICE")
-    Float price;
+    BigDecimal price;
     @Column(name = "TXT_CURRENCY")
     String currency;
     @OneToMany(mappedBy="car")
