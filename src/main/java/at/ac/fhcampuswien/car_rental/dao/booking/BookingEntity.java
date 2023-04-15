@@ -1,17 +1,14 @@
 package at.ac.fhcampuswien.car_rental.dao.booking;
 
 import at.ac.fhcampuswien.car_rental.dao.BaseEntity;
-import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -44,4 +41,9 @@ public class BookingEntity extends BaseEntity {
 
     @Column(name = "ID_USER")
     Long userId;
+
+    public BookingEntity setExpired() {
+        this.bookingStatus = BookingStatus.EXPIRED;
+        return this;
+    }
 }
