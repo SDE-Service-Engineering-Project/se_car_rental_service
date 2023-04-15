@@ -18,7 +18,7 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class ExpireBookings {
+public class BookingScheduler {
 
     BookingRepository bookingRepository;
 

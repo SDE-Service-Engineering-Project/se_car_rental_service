@@ -19,10 +19,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @SpringBootTest
-class ExpireBookingsTest extends AbstractIT {
+class BookingSchedulerTest extends AbstractIT {
 
     @Autowired
-    ExpireBookings expireBookings;
+    BookingScheduler bookingScheduler;
 
     @Autowired
     UserRepository userRepository;
@@ -38,7 +38,7 @@ class ExpireBookingsTest extends AbstractIT {
 
     @Test
     void should_expire_open_bookings() {
-        expireBookings.expireBookings();
+        bookingScheduler.expireBookings();
 
         Optional<BookingEntity> expired = bookingRepository.findById(1L);
 
