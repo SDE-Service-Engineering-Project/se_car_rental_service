@@ -4,25 +4,30 @@ package at.ac.fhcampuswien.car_rental.service.booking;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
+import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
+import at.ac.fhcampuswien.car_rental.dto.currency.ConvertResultDTO;
 import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
 import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
+import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
 import at.ac.fhcampuswien.car_rental.utils.Utils;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -42,8 +47,15 @@ public class BookingServiceImplTest {
     BookingMapper bookingMapper;
     @Mock
     UserService userService;
+    @Mock
+    CurrencyConverterService currencyConverterService;
     @InjectMocks
     BookingServiceImpl bookingService;
+
+    @BeforeEach
+    public void setUp() {
+        ReflectionTestUtils.setField(bookingService, "defaultCurrency", "USD");
+    }
 
     @Test
     void should_create_booking() {
@@ -219,5 +231,42 @@ public class BookingServiceImplTest {
         Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
 
         bookingService.expireBooking(bookingEntity.getBookingId());
+    }
+
+    @Test
+    void should_save_chosen_currency_to_booking() {
+        CreateBookingDTO createBookingDTO = Utils.createBookingDTOWithCurrency();
+
+        CarEntity carEntity = Utils.carEntity();
+        Mockito.when(carRepository.findById(createBookingDTO.carId()))
+                .thenReturn(Optional.ofNullable(carEntity));
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+                .thenReturn(List.of(Utils.bookingEntity()));
+        Mockito.when(currencyConverterService.convert(carEntity.getPrice().floatValue(), "USD", createBookingDTO.currency()))
+                .thenReturn(new ConvertResultDTO(100200.0f, "EUR"));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(Utils.userEntity());
+
+
+        bookingService.createBooking(createBookingDTO);
+
+        Mockito.verify(currencyConverterService, Mockito.times(1)).convert(carEntity.getPrice().floatValue(), "USD", createBookingDTO.currency());
+    }
+
+    @Test
+    void should_create_booking_with_usd() {
+        // Arrange
+        CreateBookingDTO createBookingDTO = Utils.createBookingDTOWithUsd();
+
+        Mockito.when(carRepository.findById(createBookingDTO.carId()))
+                .thenReturn(Optional.ofNullable(Utils.carEntity()));
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+                .thenReturn(List.of(Utils.bookingEntity()));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(Utils.userEntity());
+
+        // Act
+        bookingService.createBooking(createBookingDTO);
+
+        // Assert
+        Mockito.verify(bookingRepository, Mockito.times(1)).save(Mockito.any());
     }
 }

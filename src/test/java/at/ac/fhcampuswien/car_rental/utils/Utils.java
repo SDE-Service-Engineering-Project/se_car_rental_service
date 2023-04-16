@@ -65,6 +65,22 @@ public class Utils {
         return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, null);
     }
 
+    public CreateBookingDTO createBookingDTOWithUsd() {
+        LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
+        LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
+        Long carId = 1L;
+        String currency = "USD";
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
+    }
+
+    public CreateBookingDTO createBookingDTOWithCurrency() {
+        LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
+        LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
+        Long carId = 1L;
+        String currency = "EUR";
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
+    }
+
     public BookingEntity bookingEntity() {
         BookingEntity bookingEntity = new BookingEntity();
 

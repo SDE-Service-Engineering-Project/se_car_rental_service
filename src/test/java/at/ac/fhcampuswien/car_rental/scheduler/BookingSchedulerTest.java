@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -71,7 +72,7 @@ class BookingSchedulerTest extends AbstractIT {
         car.setBrand("BRAND");
         car.setModel("MODEL");
         car.setConstructionYear(2333);
-        car.setPrice(122F);
+        car.setPrice(BigDecimal.valueOf(122F));
         car.setCurrency("USD");
 
         carRepository.save(car);
@@ -81,7 +82,7 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity.setBookingId(1L);
         bookingEntity.setVersion(1);
         bookingEntity.setCreatedOn(LocalDateTime.now());
-        bookingEntity.setPrice(123F);
+        bookingEntity.setPrice(BigDecimal.valueOf(123F));
         bookingEntity.setCurrency("USD");
         bookingEntity.setCarId(1L);
         bookingEntity.setUserId(1L);
@@ -94,7 +95,7 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity2.setBookingId(2L);
         bookingEntity2.setVersion(1);
         bookingEntity2.setCreatedOn(LocalDateTime.now());
-        bookingEntity2.setPrice(123F);
+        bookingEntity2.setPrice(BigDecimal.valueOf(123F));
         bookingEntity2.setCurrency("USD");
         bookingEntity2.setCarId(1L);
         bookingEntity2.setUserId(1L);
