@@ -10,6 +10,7 @@ import at.ac.fhcampuswien.car_rental.dto.booking.UpdateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import lombok.experimental.UtilityClass;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -22,7 +23,7 @@ public class Utils {
     public CarEntity carEntity() {
         CarEntity carEntity = new CarEntity();
         carEntity.setCarId(1L);
-        carEntity.setPrice(10000.0f);
+        carEntity.setPrice(BigDecimal.valueOf(10000.0f));
         carEntity.setCurrency("USD");
         carEntity.setBrand("VW");
         carEntity.setModel("Golf");
@@ -36,13 +37,13 @@ public class Utils {
     public CarDTO carDTO() {
         CarEntity carEntity = carEntity();
 
-        return new CarDTO(carEntity.getCarId(), carEntity.getCreatedOn(), carEntity.getBrand(), carEntity.getModel(), carEntity.getConstructionYear(), carEntity.getPrice(), carEntity.getCurrency());
+        return new CarDTO(carEntity.getCarId(), carEntity.getCreatedOn(), carEntity.getBrand(), carEntity.getModel(), carEntity.getConstructionYear(), carEntity.getPrice().floatValue(), carEntity.getCurrency());
     }
 
     public CarEntity secondCarEntity() {
         CarEntity carEntity = new CarEntity();
         carEntity.setCarId(2L);
-        carEntity.setPrice(25000.0f);
+        carEntity.setPrice(BigDecimal.valueOf(25000.0f));
         carEntity.setCurrency("USD");
         carEntity.setBrand("Mercedes Benz");
         carEntity.setModel("Whatever");
@@ -61,15 +62,33 @@ public class Utils {
         LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
         Long carId = 1L;
-        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId);
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, null);
+    }
+
+    public CreateBookingDTO createBookingDTOWithUsd() {
+        LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
+        LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
+        Long carId = 1L;
+        String currency = "USD";
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
+    }
+
+    public CreateBookingDTO createBookingDTOWithCurrency() {
+        LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
+        LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
+        Long carId = 1L;
+        String currency = "EUR";
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
     }
 
     public BookingEntity bookingEntity() {
         BookingEntity bookingEntity = new BookingEntity();
 
         bookingEntity.setBookingId(1L);
-        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
         bookingEntity.setCurrency("USD");
+        bookingEntity.setPriceSaved(null);
+        bookingEntity.setCurrencySaved("USD");
         LocalDateTime bookedFrom = LocalDateTime.parse("05-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("07-03-2023 13:00", formatter);
         bookingEntity.setBookedFrom(bookedFrom);
@@ -85,7 +104,7 @@ public class Utils {
         BookingEntity bookingEntity = new BookingEntity();
 
         bookingEntity.setBookingId(2L);
-        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
         bookingEntity.setCurrency("USD");
         LocalDateTime bookedFrom = LocalDateTime.parse("01-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
@@ -102,7 +121,7 @@ public class Utils {
         BookingEntity bookingEntity = new BookingEntity();
 
         bookingEntity.setBookingId(1L);
-        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
         bookingEntity.setCurrency("USD");
         LocalDateTime bookedFrom = LocalDateTime.parse("05-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("07-03-2023 13:00", formatter);
@@ -125,8 +144,10 @@ public class Utils {
                 bookingEntity.getBookedFrom(),
                 bookingEntity.getBookedUntil(),
                 bookingEntity.getBookingStatus().toString(),
-                bookingEntity.getPrice(),
+                bookingEntity.getPrice().floatValue(),
                 bookingEntity.getCurrency(),
+                null,
+                bookingEntity.getCurrencySaved(),
                 carDTO(),
                 bookingEntity.getUserId()
         );
@@ -140,7 +161,7 @@ public class Utils {
         BookingEntity bookingEntity = new BookingEntity();
 
         bookingEntity.setBookingId(2L);
-        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
         bookingEntity.setCurrency("USD");
         LocalDateTime bookedFrom = LocalDateTime.parse("03-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("04-03-2023 13:00", formatter);
@@ -157,7 +178,7 @@ public class Utils {
         BookingEntity bookingEntity = new BookingEntity();
 
         bookingEntity.setBookingId(2L);
-        bookingEntity.setPrice(200000.0f);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
         bookingEntity.setCurrency("USD");
         LocalDateTime bookedFrom = LocalDateTime.parse("03-03-2023 13:00", formatter);
         LocalDateTime bookedTo = LocalDateTime.parse("05-03-2023 13:00", formatter);

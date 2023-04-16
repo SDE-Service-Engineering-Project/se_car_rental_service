@@ -8,6 +8,7 @@ import at.ac.fhcampuswien.car_rental.dto.car.CarDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -20,6 +21,8 @@ public interface BookingMapper {
     @Mapping(target = "bookingStatus", source = "entity.bookingStatus")
     @Mapping(target = "price", source = "entity.price")
     @Mapping(target = "currency", source = "entity.currency")
+    @Mapping(target = "priceSaved", source = "entity.priceSaved")
+    @Mapping(target = "currencySaved", source = "entity.currencySaved")
     @Mapping(target = "createdOn", source = "entity.createdOn")
     @Mapping(target = "userId", source = "entity.userId")
     @Mapping(target = "car", source = "carDTO")
@@ -30,10 +33,12 @@ public interface BookingMapper {
     @Mapping(target = "bookedFrom", expression = "java(Objects.requireNonNullElse(dto.bookedFrom(), LocalDateTime.now()))")
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "price", source = "price")
-    @Mapping(target = "currency", source = "currency")
+    @Mapping(target = "currency", source = "defaultCurrency")
+    @Mapping(target = "priceSaved", source = "priceSaved")
+    @Mapping(target = "currencySaved", expression = "java(Objects.requireNonNullElse(dto.currency(), defaultCurrency))")
     @Mapping(target = "carId", source = "dto.carId")
     @Mapping(target = "userId", source = "userId")
-    BookingEntity toEntity(CreateBookingDTO dto, Long userId, Float price, String currency);
+    BookingEntity toEntity(CreateBookingDTO dto, Long userId, BigDecimal price, String defaultCurrency, BigDecimal priceSaved, String currencySaved);
 
     CreateBookingResponseDTO toCreateBookingResponseDto(BookingEntity entity);
 }

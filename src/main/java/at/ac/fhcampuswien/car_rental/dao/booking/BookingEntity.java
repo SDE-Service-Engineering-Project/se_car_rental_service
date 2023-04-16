@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,9 +31,13 @@ public class BookingEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     BookingStatus bookingStatus;
     @Column(name = "BI_BOOKING_PRICE")
-    Float price;
+    BigDecimal price;
     @Column(name = "TXT_CURRENCY")
     String currency;
+    @Column(name = "BI_BOOKING_PRICE_SAVED")
+    BigDecimal priceSaved;
+    @Column(name = "TXT_CURRENCY_SAVED")
+    String currencySaved;
     @Column(name = "ID_CAR")
     Long carId;
     @ManyToOne

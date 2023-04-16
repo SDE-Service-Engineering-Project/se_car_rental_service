@@ -51,7 +51,7 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
         );
 
         return convert(
-                foundCarEntity.getPrice(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency()
+                foundCarEntity.getPrice().floatValue(), foundCarEntity.getCurrency(), convertCarPriceDTO.toCurrency()
         );
     }
 

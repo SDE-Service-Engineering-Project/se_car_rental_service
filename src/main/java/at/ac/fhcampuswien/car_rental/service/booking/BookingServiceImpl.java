@@ -12,6 +12,7 @@ import at.ac.fhcampuswien.car_rental.mapper.BookingMapper;
 import at.ac.fhcampuswien.car_rental.mapper.CarMapper;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
+import at.ac.fhcampuswien.car_rental.service.currency_converter.CurrencyConverterService;
 import at.ac.fhcampuswien.car_rental.service.user.UserService;
 import at.ac.fhcampuswien.car_rental.utils.LocalDateUtils;
 import lombok.AccessLevel;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +44,7 @@ public class BookingServiceImpl implements BookingService {
     final BookingMapper bookingMapper;
     final CarMapper carMapper;
     final UserService userService;
+    final CurrencyConverterService currencyConverterService;
 
     @Override
     @Transactional(readOnly = true)
@@ -79,9 +83,21 @@ public class BookingServiceImpl implements BookingService {
             }
         });
 
+        Float priceSaved = null;
+        // Check Currency - If sent currency not default - calculate new price and save it!
+        if (createBookingDTO.currency() != null && !defaultCurrency.equals(createBookingDTO.currency())) {
+            priceSaved = currencyConverterService.convert(carEntity.getPrice().floatValue(), defaultCurrency, createBookingDTO.currency()).amount() * createBookingDTO.daysToRent();
+        }
+
         // Booking Procedure
         UserEntity currentUser = userService.getUserEntity(userService.getUserName());
-        BookingEntity entity = bookingMapper.toEntity(createBookingDTO, currentUser.getUserId(), carEntity.getPrice() * createBookingDTO.daysToRent(), defaultCurrency);
+        BookingEntity entity = bookingMapper.toEntity(
+                createBookingDTO, currentUser.getUserId(),
+                BigDecimal.valueOf(carEntity.getPrice().floatValue() * createBookingDTO.daysToRent()).setScale(2, RoundingMode.HALF_UP),
+                defaultCurrency,
+                priceSaved != null ? BigDecimal.valueOf(priceSaved).setScale(2, RoundingMode.HALF_UP) : null,
+                createBookingDTO.currency()
+        );
         entity = bookingRepository.save(entity);
 
         return bookingMapper.toCreateBookingResponseDto(entity);

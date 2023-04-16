@@ -84,11 +84,11 @@ public class CurrencyConverterServiceImplTest {
     void should_convert_car_price() {
         CarEntity carEntity = Utils.carEntity();
         ConvertCarPriceDTO convertCarPriceDTO = new ConvertCarPriceDTO(carEntity.getCarId(), "EUR");
-        float expectedResult = carEntity.getPrice() + 10.0f;
+        float expectedResult = carEntity.getPrice().floatValue() + 10.0f;
 
         Mockito.when(carRepository.findById(carEntity.getCarId()))
                 .thenReturn(Optional.of(carEntity));
-        Mockito.when(currencyConversionService.convert(carEntity.getPrice(), carEntity.getCurrency(), convertCarPriceDTO.toCurrency()))
+        Mockito.when(currencyConversionService.convert(carEntity.getPrice().floatValue(), carEntity.getCurrency(), convertCarPriceDTO.toCurrency()))
                 .thenReturn(expectedResult);
 
         ConvertResultDTO result = currencyConverterService.convertCarPrice(convertCarPriceDTO);
