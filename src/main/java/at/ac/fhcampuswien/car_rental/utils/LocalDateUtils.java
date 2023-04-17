@@ -24,7 +24,8 @@ public class LocalDateUtils {
     }
 
     public static void validateTimespan(LocalDateTime start, LocalDateTime end) {
-        if(!start.isBefore(end)) {
+        LocalDateTime now = LocalDateTime.now();
+        if(!start.isBefore(end) || !now.minusSeconds(1).isBefore(start)  || !now.isBefore(end)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Timespan is not correct!");
         }
     }
