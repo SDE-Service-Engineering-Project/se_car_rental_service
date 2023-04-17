@@ -132,7 +132,7 @@ public class BookingServiceImpl implements BookingService {
                 .findAny()
                 .orElseThrow(() -> {
                     log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
-                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
                 });
     }
 
