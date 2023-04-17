@@ -144,7 +144,7 @@
                 </executions>
                 <configuration>
                     <wsdlUrls>
-                        <wsdlUrl>http://localhost:8000/?wsdl</wsdlUrl>
+                        <wsdlUrl>${CURRENCY_CONVERTER_URL}</wsdlUrl>
                     </wsdlUrls>
                     <packageName>at.ac.fhcampuswien.car_rental.soap.client</packageName>
                     <sourceDestDir>

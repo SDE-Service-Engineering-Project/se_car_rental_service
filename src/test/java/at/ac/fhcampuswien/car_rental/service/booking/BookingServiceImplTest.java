@@ -180,6 +180,21 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void should_delete_pending_booking() {
+        UserEntity userEntity = Utils.userEntity();
+        BookingEntity bookingEntity = Utils.pendingBookingEntity();
+        bookingEntity.setUserId(userEntity.getUserId());
+
+        Mockito.when(bookingRepository.findById(bookingEntity.getBookingId())).thenReturn(Optional.of(bookingEntity));
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
+
+        bookingService.expireBooking(bookingEntity.getBookingId());
+
+        Mockito.verify(bookingRepository, Mockito.times(1)).delete(bookingEntity);
+
+    }
+
+    @Test
     void should_save_chosen_currency_to_booking() {
         CreateBookingDTO createBookingDTO = Utils.createBookingDTOWithCurrency();
 

@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.car_rental.mapper;
 
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
+import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.dto.booking.BookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingDTO;
 import at.ac.fhcampuswien.car_rental.dto.booking.CreateBookingResponseDTO;
@@ -28,7 +29,7 @@ public interface BookingMapper {
     @Mapping(target = "car", source = "carDTO")
     BookingDTO toDto(BookingEntity entity, CarDTO carDTO);
 
-    @Mapping(target = "bookingStatus", constant = "BOOKED")
+    @Mapping(target = "bookingStatus", source = "bookingStatus")
     @Mapping(target = "createdOn", expression = "java(LocalDateTime.now())")
     @Mapping(target = "bookedFrom", expression = "java(Objects.requireNonNullElse(dto.bookedFrom(), LocalDateTime.now()))")
     @Mapping(target = "version", ignore = true)
@@ -38,7 +39,7 @@ public interface BookingMapper {
     @Mapping(target = "currencySaved", expression = "java(Objects.requireNonNullElse(dto.currency(), defaultCurrency))")
     @Mapping(target = "carId", source = "dto.carId")
     @Mapping(target = "userId", source = "userId")
-    BookingEntity toEntity(CreateBookingDTO dto, Long userId, BigDecimal price, String defaultCurrency, BigDecimal priceSaved, String currencySaved);
+    BookingEntity toEntity(CreateBookingDTO dto, Long userId, BigDecimal price, String defaultCurrency, BigDecimal priceSaved, String currencySaved, BookingStatus bookingStatus);
 
     CreateBookingResponseDTO toCreateBookingResponseDto(BookingEntity entity);
 }

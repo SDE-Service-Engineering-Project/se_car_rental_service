@@ -47,8 +47,8 @@ public class BookingEntity extends BaseEntity {
     @Column(name = "ID_USER")
     Long userId;
 
-    public BookingEntity setExpired() {
-        this.bookingStatus = BookingStatus.EXPIRED;
+    public BookingEntity setStatus(BookingStatus bookingStatus) {
+        this.bookingStatus = bookingStatus;
         return this;
     }
 }

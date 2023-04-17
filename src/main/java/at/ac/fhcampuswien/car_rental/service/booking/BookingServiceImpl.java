@@ -78,7 +78,8 @@ public class BookingServiceImpl implements BookingService {
                 BigDecimal.valueOf(carDTO.price() * createBookingDTO.daysToRent()).setScale(2, RoundingMode.HALF_UP),
                 defaultCurrency,
                 calculateSavedPricing(createBookingDTO, carDTO.price()),
-                createBookingDTO.currency()
+                createBookingDTO.currency(),
+                createBookingDTO.bookedFrom().isAfter(LocalDateTime.now()) ? BookingStatus.PENDING : BookingStatus.BOOKED
         );
 
         return bookingMapper.toCreateBookingResponseDto(bookingRepository.save(entity));
@@ -89,6 +90,11 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity bookingEntity = getBookingEntity(bookingId);
 
         checkIfAuthorized(bookingEntity);
+
+        if (bookingEntity.getBookingStatus().equals(BookingStatus.PENDING)) {
+            bookingRepository.delete(bookingEntity);
+            return;
+        }
 
         bookingEntity.setBookedUntil(LocalDateTime.now());
         bookingEntity.setBookingStatus(BookingStatus.EXPIRED);
@@ -119,6 +125,7 @@ public class BookingServiceImpl implements BookingService {
     private void assertCarIsNotBooked(CreateBookingDTO createBookingDTO) {
         // Check if Car is already booked before proceeding
         List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
+        if (savedBookingEntities.isEmpty()) return;
         savedBookingEntities
                 .stream()
                 .filter(item -> !LocalDateUtils.isOverlapping(createBookingDTO.bookedFrom(), createBookingDTO.bookedUntil(), item.getBookedFrom(), item.getBookedUntil()))

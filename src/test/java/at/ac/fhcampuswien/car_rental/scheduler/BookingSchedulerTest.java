@@ -11,6 +11,7 @@ import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookingSchedulerTest extends AbstractIT {
 
     @Autowired
@@ -57,6 +59,7 @@ class BookingSchedulerTest extends AbstractIT {
     private void insertTestData() {
         UserEntity userEntity = new UserEntity();
 
+        userEntity.setUserId(4L);
         userEntity.setUserName("test");
         userEntity.setFirstName("test");
         userEntity.setLastName("test");
@@ -85,7 +88,7 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity.setPrice(BigDecimal.valueOf(123F));
         bookingEntity.setCurrency("USD");
         bookingEntity.setCarId(1L);
-        bookingEntity.setUserId(1L);
+        bookingEntity.setUserId(4L);
         bookingEntity.setBookedFrom(LocalDateTime.of(2022, 1, 1, 12, 12));
         bookingEntity.setBookedUntil(LocalDateTime.of(2022, 2, 1, 12, 12));
         bookingEntity.setBookingStatus(BookingStatus.BOOKED);
@@ -98,7 +101,7 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity2.setPrice(BigDecimal.valueOf(123F));
         bookingEntity2.setCurrency("USD");
         bookingEntity2.setCarId(1L);
-        bookingEntity2.setUserId(1L);
+        bookingEntity2.setUserId(4L);
         bookingEntity2.setBookedFrom(LocalDateTime.of(2022, 1, 1, 12, 12));
         bookingEntity2.setBookedUntil(LocalDateTime.of(2122, 2, 1, 12, 12));
         bookingEntity2.setBookingStatus(BookingStatus.BOOKED);

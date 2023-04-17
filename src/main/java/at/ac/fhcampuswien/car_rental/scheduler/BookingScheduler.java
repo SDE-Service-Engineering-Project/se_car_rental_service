@@ -30,10 +30,26 @@ public class BookingScheduler {
         List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED)
                 .stream()
                 .filter((bookingEntity -> !bookingEntity.getBookedUntil().isAfter(LocalDateTime.now())))
-                .map(BookingEntity::setExpired)
+                .map(item -> item.setStatus(BookingStatus.EXPIRED))
                 .toList();
 
         log.info("found {} bookings to expire", list.size());
+
+        bookingRepository.saveAll(list);
+    }
+
+    // Setting "Pending" Bookings to "Booked" if started
+    @Scheduled(cron = "0 0/15 * * * ?") // every fifteen minutes
+    @Transactional
+    public void startBooking() {
+        log.info("looking for bookings to set to booked");
+        List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.PENDING)
+                .stream()
+                .filter((bookingEntity -> bookingEntity.getBookedFrom().isBefore(LocalDateTime.now())))
+                .map(item -> item.setStatus(BookingStatus.BOOKED))
+                .toList();
+
+        log.info("found {} bookings to set from pending to booked", list.size());
 
         bookingRepository.saveAll(list);
     }
