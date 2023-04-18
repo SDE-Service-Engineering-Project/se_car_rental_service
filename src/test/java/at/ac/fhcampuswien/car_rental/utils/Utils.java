@@ -25,8 +25,22 @@ public class Utils {
         carEntity.setCarId(1L);
         carEntity.setPrice(BigDecimal.valueOf(10000.0f));
         carEntity.setCurrency("USD");
-        carEntity.setBrand("VW");
-        carEntity.setModel("Golf");
+        carEntity.setBrand("Toyota");
+        carEntity.setModel("Model 1");
+        carEntity.setConstructionYear(2018);
+        carEntity.setCreatedOn(LocalDateTime.now());
+        carEntity.setVersion(0);
+
+        return carEntity;
+    }
+
+    public CarEntity carEntityId3() {
+        CarEntity carEntity = new CarEntity();
+        carEntity.setCarId(3L);
+        carEntity.setPrice(BigDecimal.valueOf(10000.0f));
+        carEntity.setCurrency("USD");
+        carEntity.setBrand("Toyota");
+        carEntity.setModel("Model 1");
         carEntity.setConstructionYear(2018);
         carEntity.setCreatedOn(LocalDateTime.now());
         carEntity.setVersion(0);
@@ -81,6 +95,13 @@ public class Utils {
         return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
     }
 
+    public CreateBookingDTO createBookingForFutureDTO() {
+        LocalDateTime bookedFrom = LocalDateTime.now().plusDays(5);
+        LocalDateTime bookedTo = LocalDateTime.now().plusDays(10);
+        Long carId = 3L;
+        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, null);
+    }
+
     public BookingEntity bookingEntity() {
         BookingEntity bookingEntity = new BookingEntity();
 
@@ -96,6 +117,27 @@ public class Utils {
         bookingEntity.setBookingStatus(BookingStatus.BOOKED);
         bookingEntity.setUserId(1L);
         bookingEntity.setCarId(1L);
+
+        return bookingEntity;
+    }
+
+
+    public BookingEntity pendingBookingEntity() {
+        BookingEntity bookingEntity = new BookingEntity();
+
+        bookingEntity.setBookingId(5L);
+        bookingEntity.setPrice(BigDecimal.valueOf(200000.0f));
+        bookingEntity.setCurrency("USD");
+        bookingEntity.setPriceSaved(null);
+        bookingEntity.setCurrencySaved("USD");
+        LocalDateTime bookedFrom = LocalDateTime.now().minusHours(3);
+        LocalDateTime bookedTo = LocalDateTime.now().plusDays(7);
+        bookingEntity.setBookedFrom(bookedFrom);
+        bookingEntity.setBookedUntil(bookedTo);
+        bookingEntity.setBookingStatus(BookingStatus.PENDING);
+        bookingEntity.setUserId(4L);
+        bookingEntity.setCarId(1L);
+        bookingEntity.setVersion(1);
 
         return bookingEntity;
     }
@@ -210,6 +252,20 @@ public class Utils {
 
         userEntity.setUserId(1L);
         userEntity.setUserName("user");
+        userEntity.setPassword("password");
+        userEntity.setFirstName("first");
+        userEntity.setLastName("last");
+        userEntity.setCreatedOn(LocalDateTime.now());
+        userEntity.setVersion(0);
+
+        return userEntity;
+    }
+
+    public UserEntity userEntityWithUsername(String username) {
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setUserId(2L);
+        userEntity.setUserName(username);
         userEntity.setPassword("password");
         userEntity.setFirstName("first");
         userEntity.setLastName("last");

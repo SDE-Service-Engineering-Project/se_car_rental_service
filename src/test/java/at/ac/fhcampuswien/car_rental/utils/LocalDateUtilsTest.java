@@ -12,11 +12,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.Assert.fail;
-
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LocalDateUtilsTest {
+class LocalDateUtilsTest {
 
     @Test
     void should_return_true_because_overlapping() {
@@ -57,20 +55,46 @@ public class LocalDateUtilsTest {
 
     @Test
     void should_not_throw_error_to_valid_timestamp() {
-        LocalDateTime start = LocalDateTime.now().minusDays(5);
-        LocalDateTime end = LocalDateTime.now().minusDays(3);
+        LocalDateTime start = LocalDateTime.now().plusDays(3);
+        LocalDateTime end = LocalDateTime.now().plusDays(5);
 
         try {
             LocalDateUtils.validateTimespan(start, end);
         } catch(Exception e) {
-            fail("Should not have thrown any exception");
+            Assertions.fail("Should not have thrown any exception");
         }
     }
 
     @Test
     void should_throw_error_to_invalid_timestamp() {
-        LocalDateTime start = LocalDateTime.now().minusDays(5);
-        LocalDateTime end = LocalDateTime.now().minusDays(6);
+        LocalDateTime start = LocalDateTime.now().plusDays(6);
+        LocalDateTime end = LocalDateTime.now().plusDays(5);
+
+
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    LocalDateUtils.validateTimespan(start, end);
+                }
+        );
+    }
+
+    @Test
+    void should_throw_error_to_past_start_and_end_date() {
+        LocalDateTime start = LocalDateTime.now().minusDays(3);
+        LocalDateTime end = LocalDateTime.now().minusDays(5);
+
+
+        Assertions.assertThrows(
+                ResponseStatusException.class, () -> {
+                    LocalDateUtils.validateTimespan(start, end);
+                }
+        );
+    }
+
+    @Test
+    void should_throw_error_to_past_start_date() {
+        LocalDateTime start = LocalDateTime.now().minusDays(3);
+        LocalDateTime end = LocalDateTime.now().plusDays(5);
 
 
         Assertions.assertThrows(

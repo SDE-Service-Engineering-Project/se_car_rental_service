@@ -57,7 +57,7 @@ public class CarServiceImpl implements CarService {
                 .map(BookingEntity::getCarId)
                 .collect(Collectors.toList());
 
-        List<CarEntity> availableCars = carIds.size() > 0 ? carRepository.findByCarIdNotIn(
+        List<CarEntity> availableCars = !carIds.isEmpty() ? carRepository.findByCarIdNotIn(
                 carIds
         ) : carRepository.findAll();
 

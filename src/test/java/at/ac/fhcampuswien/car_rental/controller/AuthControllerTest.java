@@ -6,11 +6,9 @@ import at.ac.fhcampuswien.car_rental.dto.auth.ChangePasswordDTO;
 import at.ac.fhcampuswien.car_rental.dto.auth.RegisterDTO;
 import at.ac.fhcampuswien.car_rental.repository.auth.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,13 +34,6 @@ class AuthControllerTest extends AbstractIT {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
-    @InjectMocks
-    AuthController authController;
-
-    @AfterAll
-    public static void setUp() {
-
-    }
 
     @Test
     void should_create_user() throws Exception {
@@ -60,7 +49,7 @@ class AuthControllerTest extends AbstractIT {
         UserEntity testEntity = userRepository.findByUserName("testUser").get();
 
         Assertions.assertNotNull(testEntity);
-        Assertions.assertEquals(testEntity.getUserName(), "testUser");
+        Assertions.assertEquals("testUser", testEntity.getUserName());
     }
 
     @Test
@@ -116,18 +105,4 @@ class AuthControllerTest extends AbstractIT {
                 .andExpect(status().isBadRequest())
                 .andReturn().getResolvedException().getMessage();
     }
-
-    private UserEntity getUserEntity() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserName("dwight");
-        userEntity.setPassword(passwordEncoder.encode("auto2413"));
-        userEntity.setFirstName("Dwight");
-        userEntity.setLastName("Schrute");
-        userEntity.setCreatedOn(LocalDateTime.now());
-        userEntity.setVersion(0);
-
-        return userEntity;
-
-    }
-
 }
