@@ -14,7 +14,7 @@ import java.time.LocalTime;
 
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LocalDateUtilsTest {
+class LocalDateUtilsTest {
 
     @Test
     void should_return_true_because_overlapping() {

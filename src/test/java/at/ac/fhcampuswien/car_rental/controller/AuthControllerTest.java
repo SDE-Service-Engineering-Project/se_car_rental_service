@@ -49,7 +49,7 @@ class AuthControllerTest extends AbstractIT {
         UserEntity testEntity = userRepository.findByUserName("testUser").get();
 
         Assertions.assertNotNull(testEntity);
-        Assertions.assertEquals(testEntity.getUserName(), "testUser");
+        Assertions.assertEquals("testUser", testEntity.getUserName());
     }
 
     @Test

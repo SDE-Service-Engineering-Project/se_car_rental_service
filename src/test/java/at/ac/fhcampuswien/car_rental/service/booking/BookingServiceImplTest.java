@@ -34,7 +34,7 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingServiceImplTest {
+class BookingServiceImplTest {
 
     @Mock
     BookingRepository bookingRepository;
@@ -123,6 +123,7 @@ public class BookingServiceImplTest {
         BookingEntity bookingEntity = Utils.bookingEntityWithCar();
         CarDTO carDTO = Utils.carDTO();
         BookingDTO bookingDTO = Utils.bookingDTOFromEntityWithCar();
+        UserEntity userEntity = Utils.userEntity();
 
         Mockito.when(bookingRepository.findById(bookingEntity.getBookingId()))
                 .thenReturn(Optional.of(bookingEntity));
@@ -130,6 +131,7 @@ public class BookingServiceImplTest {
                 .thenReturn(carDTO);
         Mockito.when(bookingMapper.toDto(bookingEntity, carDTO))
                 .thenReturn(bookingDTO);
+        Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(userEntity);
 
         BookingDTO result = bookingService.getBookingById(bookingEntity.getBookingId());
 

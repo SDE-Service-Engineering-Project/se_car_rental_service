@@ -33,9 +33,7 @@ public class SoapAuthHandler implements SOAPHandler<SOAPMessageContext> {
 
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
-        Boolean outboundProperty =
-                (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-        if (outboundProperty) {
+        if ((boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
             try {
                 Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -63,6 +61,7 @@ public class SoapAuthHandler implements SOAPHandler<SOAPMessageContext> {
         return false;
     }
 
+    // Not needed
     @Override
     public void close(MessageContext context) {}
 

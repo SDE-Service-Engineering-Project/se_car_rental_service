@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @MappedSuperclass

@@ -12,8 +12,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -58,8 +58,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public BookingDTO getBookingById(Long bookingId) {
-        // TODO: Throw error if searching for Booking which does not belong to User?
         BookingEntity bookingEntity = getBookingEntity(bookingId);
+        checkIfAuthorized(bookingEntity);
         return bookingMapper.toDto(bookingEntity, carMapper.toDto(bookingEntity.getCar()));
     }
 
@@ -126,14 +126,17 @@ public class BookingServiceImpl implements BookingService {
         // Check if Car is already booked before proceeding
         List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
         if (savedBookingEntities.isEmpty()) return;
-        savedBookingEntities
+        if (savedBookingEntities
                 .stream()
-                .filter(item -> !LocalDateUtils.isOverlapping(createBookingDTO.bookedFrom(), createBookingDTO.bookedUntil(), item.getBookedFrom(), item.getBookedUntil()))
-                .findAny()
-                .orElseThrow(() -> {
-                    log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
-                });
+                .anyMatch(item -> LocalDateUtils.isOverlapping(
+                        createBookingDTO.bookedFrom(),
+                        createBookingDTO.bookedUntil(),
+                        item.getBookedFrom(),
+                        item.getBookedUntil()
+                ))) {
+            log.error("Car with the id {} is already booked in that timestamp!", createBookingDTO.carId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car with the id " + createBookingDTO.carId() + " is already booked in the timespan!");
+        }
     }
 
     private BigDecimal calculateSavedPricing(CreateBookingDTO bookingDTO, float price) {

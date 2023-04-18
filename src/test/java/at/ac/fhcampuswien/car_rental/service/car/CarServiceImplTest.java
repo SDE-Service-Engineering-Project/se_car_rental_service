@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CarServiceImplTest {
+class CarServiceImplTest {
     @Mock
     BookingRepository bookingRepository;
     @Mock
