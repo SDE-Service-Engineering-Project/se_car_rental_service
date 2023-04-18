@@ -13,6 +13,9 @@ It is important to generate the sources first (for the SOAP Client Stub) before 
 To build the application locally, add the following environment variable should be set in your environment:
 - `CURRENCY_CONVERTER_URL=http://169.51.206.49:32767/?wsdl`
 
+It is also necessary to start a local postgresql instance (best via Docker) and to setup the **application.yml** properly (DB URL).
+Name the database **"postgres"** (or update the application.yml Postgres URL).
+
 To recreate the database, run the following commands:
 - `ibmcloud login`
 - `kubectl delete services/postgres`
