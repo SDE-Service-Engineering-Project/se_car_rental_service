@@ -1,4 +1,6 @@
 spring:
+  main:
+    web-application-type: reactive
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://${POSTGRES_SERVICE_NAME:localhost}:5432/postgres
@@ -28,8 +30,3 @@ jwt:
     key: classpath:rsaKey/rsa.pub
   private:
     key: classpath:rsaKey/rsa.key
-
-currency-converter:
-  wsdl: ${CURRENCY_CONVERTER_URL:http://169.51.206.49:32767/?wsdl}
-  # Needs also be changed in flyway migration script -> Cars will be saved in USD by default
-  default-currency: 'USD'

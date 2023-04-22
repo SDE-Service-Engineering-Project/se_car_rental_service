@@ -49,7 +49,7 @@ jobs:
           distribution: 'temurin'
       # Build with maven
       - name: Build with Maven
-        run: mvn -DCURRENCY_CONVERTER_URL=${CURRENCY_CONVERTER_URL} --file=pom.xml --batch-mode --update-snapshots clean install
+        run: mvn --file=pom.xml --batch-mode --update-snapshots clean install
       # Build docker image
       - name: Build with Docker
         run: |
