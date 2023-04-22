@@ -62,18 +62,4 @@ public class AuthController {
         refreshTokenService.deleteRefreshToken(logoutDTO.refreshToken());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @Operation(summary = "Delete my user account")
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteMyAccount() {
-        userService.deleteMyAccount();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Operation(summary = "Verify my password")
-    @PostMapping("/verify/password")
-    public ResponseEntity<Void> verifyPassword(@RequestBody String password) {
-        userService.verifyPassword(password);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

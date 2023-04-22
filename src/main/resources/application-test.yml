@@ -1,6 +1,3 @@
-logging:
-  level:
-    liquibase: INFO
 spring:
   jpa:
     hibernate:

@@ -2,10 +2,13 @@ package at.ac.fhcampuswien.car_rental.controller;
 
 import at.ac.fhcampuswien.car_rental.AbstractIT;
 import at.ac.fhcampuswien.car_rental.dao.auth.UserEntity;
+import at.ac.fhcampuswien.car_rental.dto.auth.AuthenticationDTO;
 import at.ac.fhcampuswien.car_rental.dto.auth.ChangePasswordDTO;
+import at.ac.fhcampuswien.car_rental.dto.auth.LoginDTO;
 import at.ac.fhcampuswien.car_rental.dto.auth.RegisterDTO;
 import at.ac.fhcampuswien.car_rental.repository.auth.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +22,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -31,6 +39,11 @@ class AuthControllerTest extends AbstractIT {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @AfterEach
+    void remove() {
+        userRepository.deleteAll();
+    }
 
     @Test
     void should_create_user() throws Exception {
@@ -47,10 +60,11 @@ class AuthControllerTest extends AbstractIT {
                 .getResponseBody()
                 .blockFirst();
 
-        UserEntity testEntity = userRepository.findByUserName("testUser").get();
+        Optional<UserEntity> testEntity = userRepository.findByUserName("testUser");
 
-        Assertions.assertNotNull(testEntity);
-        Assertions.assertEquals("testUser", testEntity.getUserName());
+        assertTrue(testEntity.isPresent());
+        Assertions.assertNotNull(testEntity.get());
+        Assertions.assertEquals("testUser", testEntity.get().getUserName());
     }
 
     @Test
@@ -79,25 +93,44 @@ class AuthControllerTest extends AbstractIT {
                 .getResponseBody()
                 .blockFirst();
 
-        UserEntity testingerEntity = userRepository.findByUserName("testinger").get();
 
-        Assertions.assertNotNull(testingerEntity);
+        Optional<UserEntity> testEntity = userRepository.findByUserName("testinger");
+
+        assertTrue(testEntity.isPresent());
+        Assertions.assertNotNull(testEntity.get());
     }
 
     @Test
-    void unauthenticated_access() throws Exception {
-        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("auto2413", "auto1234", "auto1234");
+    void register_and_login() throws Exception {
+        RegisterDTO registerDTO = new RegisterDTO("testUser", "firstName", "lastName", "auto2413");
 
         webTestClient.post()
-                .uri("/api/v1/password")
+                .uri("/api/v1/auth/signup")
                 .header("content-type", "application/json")
                 .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(new ObjectMapper().writeValueAsString(changePasswordDTO)))
+                .body(BodyInserters.fromValue(new ObjectMapper().writeValueAsString(registerDTO)))
                 .exchange()
-                .expectStatus().isUnauthorized()
+                .expectStatus().isCreated()
                 .returnResult(String.class)
                 .getResponseBody()
                 .blockFirst();
+
+
+        LoginDTO loginDTO = new LoginDTO("testUser", "auto2413");
+
+        AuthenticationDTO authenticationDTO = webTestClient.post()
+                .uri("/api/v1/auth/login")
+                .header("content-type", "application/json")
+                .accept(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(new ObjectMapper().writeValueAsString(loginDTO)))
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(AuthenticationDTO.class)
+                .getResponseBody()
+                .blockFirst();
+
+        assertThat(authenticationDTO).isNotNull();
+        assertThat(authenticationDTO.userName()).isEqualTo("testUser");
     }
 
     @Test
