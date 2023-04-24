@@ -9,8 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -18,10 +16,10 @@ class LocalDateUtilsTest {
 
     @Test
     void should_return_true_because_overlapping() {
-        LocalDateTime startA = LocalDateTime.now().minusDays(5);
-        LocalDateTime endA = LocalDateTime.now().minusDays(2);
-        LocalDateTime startB = LocalDateTime.now().minusDays(4);
-        LocalDateTime endB = LocalDateTime.now().minusDays(1);
+        LocalDate startA = LocalDate.now().minusDays(5);
+        LocalDate endA = LocalDate.now().minusDays(2);
+        LocalDate startB = LocalDate.now().minusDays(4);
+        LocalDate endB = LocalDate.now().minusDays(1);
 
         boolean result = LocalDateUtils.isOverlapping(startA, endA, startB, endB);
 
@@ -30,10 +28,10 @@ class LocalDateUtilsTest {
 
     @Test
     void should_return_false_because_not_overlapping() {
-        LocalDateTime startA = LocalDateTime.now().minusDays(5);
-        LocalDateTime endA = LocalDateTime.now().minusDays(3);
-        LocalDateTime startB = LocalDateTime.now().minusDays(2);
-        LocalDateTime endB = LocalDateTime.now().minusDays(1);
+        LocalDate startA = LocalDate.now().minusDays(5);
+        LocalDate endA = LocalDate.now().minusDays(3);
+        LocalDate startB = LocalDate.now().minusDays(2);
+        LocalDate endB = LocalDate.now().minusDays(1);
 
         boolean result = LocalDateUtils.isOverlapping(startA, endA, startB, endB);
 
@@ -43,64 +41,67 @@ class LocalDateUtilsTest {
     @Test
     void should_convert_long_to_datetime() {
         Long toConvert = 1680559200000L;
-        LocalDateTime expectedLocalDateTime = LocalDateTime.of(
-                LocalDate.of(2023, 4, 4),
-                LocalTime.of(0, 0, 0, 0)
-        );
+        LocalDate expectedLocalDateTime = LocalDate.of(2023, 4, 4);
 
-        LocalDateTime result = LocalDateUtils.convertLongToLocalDateTime(toConvert);
+        LocalDate result = LocalDateUtils.convertLongToLocalDate(toConvert);
 
         Assertions.assertEquals(expectedLocalDateTime, result);
     }
 
     @Test
     void should_not_throw_error_to_valid_timestamp() {
-        LocalDateTime start = LocalDateTime.now().plusDays(3);
-        LocalDateTime end = LocalDateTime.now().plusDays(5);
+        LocalDate start = LocalDate.now().plusDays(3);
+        LocalDate end = LocalDate.now().plusDays(5);
 
         try {
             LocalDateUtils.validateTimespan(start, end);
-        } catch(Exception e) {
+        } catch (Exception e) {
+            Assertions.fail("Should not have thrown any exception");
+        }
+    }
+
+    @Test
+    void should_not_throw_error_to_todays_timestamp() {
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusDays(5);
+
+        try {
+            LocalDateUtils.validateTimespan(start, end);
+        } catch (Exception e) {
             Assertions.fail("Should not have thrown any exception");
         }
     }
 
     @Test
     void should_throw_error_to_invalid_timestamp() {
-        LocalDateTime start = LocalDateTime.now().plusDays(6);
-        LocalDateTime end = LocalDateTime.now().plusDays(5);
+        LocalDate start = LocalDate.now().plusDays(6);
+        LocalDate end = LocalDate.now().plusDays(5);
 
 
         Assertions.assertThrows(
-                ResponseStatusException.class, () -> {
-                    LocalDateUtils.validateTimespan(start, end);
-                }
+                ResponseStatusException.class, () -> LocalDateUtils.validateTimespan(start, end)
         );
     }
 
     @Test
     void should_throw_error_to_past_start_and_end_date() {
-        LocalDateTime start = LocalDateTime.now().minusDays(3);
-        LocalDateTime end = LocalDateTime.now().minusDays(5);
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now().minusDays(5);
 
 
         Assertions.assertThrows(
-                ResponseStatusException.class, () -> {
-                    LocalDateUtils.validateTimespan(start, end);
-                }
+                ResponseStatusException.class, () -> LocalDateUtils.validateTimespan(start, end)
         );
     }
 
     @Test
     void should_throw_error_to_past_start_date() {
-        LocalDateTime start = LocalDateTime.now().minusDays(3);
-        LocalDateTime end = LocalDateTime.now().plusDays(5);
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now().plusDays(5);
 
 
         Assertions.assertThrows(
-                ResponseStatusException.class, () -> {
-                    LocalDateUtils.validateTimespan(start, end);
-                }
+                ResponseStatusException.class, () -> LocalDateUtils.validateTimespan(start, end)
         );
     }
 }

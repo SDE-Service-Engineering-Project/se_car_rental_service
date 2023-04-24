@@ -21,7 +21,7 @@ public class CurrencyController {
     CurrencyConverterService currencyConverterService;
     @Operation(summary = "Get all possible Currencies")
     @GetMapping
-    public ResponseEntity<CurrencyDTO> getMyBookings() {
+    public ResponseEntity<CurrencyDTO> getAllCurrencies() {
         return ResponseEntity.ok(currencyConverterService.getAllCurrencies());
     }
 

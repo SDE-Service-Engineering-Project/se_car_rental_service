@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
                 defaultCurrency,
                 calculateSavedPricing(createBookingDTO, carDTO.price()),
                 createBookingDTO.currency(),
-                createBookingDTO.bookedFrom().isAfter(LocalDateTime.now()) ? BookingStatus.PENDING : BookingStatus.BOOKED
+                createBookingDTO.bookedFrom().isAfter(LocalDate.now()) ? BookingStatus.PENDING : BookingStatus.BOOKED
         );
 
         return bookingMapper.toCreateBookingResponseDto(bookingRepository.save(entity));
@@ -96,7 +96,7 @@ public class BookingServiceImpl implements BookingService {
             return;
         }
 
-        bookingEntity.setBookedUntil(LocalDateTime.now());
+        bookingEntity.setBookedUntil(LocalDate.now());
         bookingEntity.setBookingStatus(BookingStatus.EXPIRED);
 
         bookingRepository.save(bookingEntity);

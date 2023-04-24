@@ -11,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -36,8 +36,8 @@ public class CarController {
 
     @GetMapping("/available")
     public ResponseEntity<List<CarDTO>> getAvailableCars(@RequestParam Long neededFrom, @RequestParam Long neededTo) {
-        LocalDateTime neededFromDate = LocalDateUtils.convertLongToLocalDateTime(neededFrom);
-        LocalDateTime neededToDate = LocalDateUtils.convertLongToLocalDateTime(neededTo);
+        LocalDate neededFromDate = LocalDateUtils.convertLongToLocalDate(neededFrom);
+        LocalDate neededToDate = LocalDateUtils.convertLongToLocalDate(neededTo);
         LocalDateUtils.validateTimespan(neededFromDate, neededToDate);
         return ResponseEntity.ok(carService.getAvailableCars(neededFromDate, neededToDate));
     }

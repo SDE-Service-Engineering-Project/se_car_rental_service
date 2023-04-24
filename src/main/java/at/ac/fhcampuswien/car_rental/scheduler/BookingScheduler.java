@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -29,7 +29,7 @@ public class BookingScheduler {
         log.info("looking for bookings to expire");
         List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED)
                 .stream()
-                .filter((bookingEntity -> !bookingEntity.getBookedUntil().isAfter(LocalDateTime.now())))
+                .filter((bookingEntity -> !bookingEntity.getBookedUntil().isAfter(LocalDate.now())))
                 .map(item -> item.setStatus(BookingStatus.EXPIRED))
                 .toList();
 
@@ -45,7 +45,7 @@ public class BookingScheduler {
         log.info("looking for bookings to set to booked");
         List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.PENDING)
                 .stream()
-                .filter((bookingEntity -> bookingEntity.getBookedFrom().isBefore(LocalDateTime.now())))
+                .filter((bookingEntity -> bookingEntity.getBookedFrom().isBefore(LocalDate.now())))
                 .map(item -> item.setStatus(BookingStatus.BOOKED))
                 .toList();
 

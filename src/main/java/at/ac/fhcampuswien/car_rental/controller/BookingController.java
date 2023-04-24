@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +42,7 @@ public class BookingController {
     @Operation(summary = "Create a Booking")
     @PostMapping
     public ResponseEntity<CreateBookingResponseDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
-        LocalDateUtils.validateTimespan(Objects.requireNonNullElse(createBookingDTO.bookedFrom(), LocalDateTime.now()), createBookingDTO.bookedUntil());
+        LocalDateUtils.validateTimespan(Objects.requireNonNullElse(createBookingDTO.bookedFrom(), LocalDate.now()), createBookingDTO.bookedUntil());
         return new ResponseEntity<>(bookingService.createBooking(createBookingDTO), HttpStatus.CREATED);
     }
 
