@@ -5,8 +5,6 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-env:
-  CURRENCY_CONVERTER_URL: http://169.51.206.49:32767/?wsdl
 
 jobs:
   build:

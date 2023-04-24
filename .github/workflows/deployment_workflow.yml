@@ -5,22 +5,20 @@ name: Build and deploy to IBM Kubernetes
 on:
   push:
     branches:
-#      - release/part1
       - main
 
 env:
   GITHUB_SHA: ${{ github.sha }}
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
   IBM_CLOUD_REGION: eu-de
-  K8S_NAMESPACE: part1 # ADAPT!
-  IMAGE_NAME: se-car-rental-service-part1 # ADAPT!
+  K8S_NAMESPACE: part2 # ADAPT!
+  IMAGE_NAME: se-car-rental-service-part2 # ADAPT!
   IKS_CLUSTER: ${{ secrets.IKS_CLUSTER }} # name or id of cluster
-  DEPLOYMENT_NAME: se-car-rental-service-part1 # ADAPT!
+  DEPLOYMENT_NAME: se-car-rental-service-part2 # ADAPT!
   INTERNAL_PORT: 8080 # ADAPT!
   EXTERNAL_PORT: 32766 # ADAPT!
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  CURRENCY_CONVERTER_URL: http://169.51.206.49:32767/?wsdl
   POSTGRES_SERVICE_NAME: postgres
 
 
@@ -70,7 +68,7 @@ jobs:
           kubectl create namespace $K8S_NAMESPACE --dry-run=client -o yaml > namespace.yaml
           kubectl apply -f namespace.yaml
           kubectl config set-context --current --namespace=$K8S_NAMESPACE
-          kubectl create configmap $DEPLOYMENT_NAME --from-literal=CURRENCY_CONVERTER_URL=${CURRENCY_CONVERTER_URL} --from-literal=POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME} --dry-run -o yaml > configmap.yaml
+          kubectl create configmap $DEPLOYMENT_NAME --from-literal=POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME} --dry-run -o yaml > configmap.yaml
           kubectl apply -f configmap.yaml
           kubectl create deployment $DEPLOYMENT_NAME --image="$DOCKER_USER"/"$IMAGE_NAME":"$GITHUB_SHA" --dry-run -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
