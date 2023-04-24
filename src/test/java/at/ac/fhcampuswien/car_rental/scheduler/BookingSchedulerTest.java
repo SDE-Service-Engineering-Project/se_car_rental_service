@@ -8,6 +8,7 @@ import at.ac.fhcampuswien.car_rental.dao.car.CarEntity;
 import at.ac.fhcampuswien.car_rental.repository.auth.UserRepository;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
 import at.ac.fhcampuswien.car_rental.repository.car.CarRepository;
+import at.ac.fhcampuswien.car_rental.utils.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,8 +90,8 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity.setCurrency("USD");
         bookingEntity.setCarId(1L);
         bookingEntity.setUserId(4L);
-        bookingEntity.setBookedFrom(LocalDateTime.of(2022, 1, 1, 12, 12));
-        bookingEntity.setBookedUntil(LocalDateTime.of(2022, 2, 1, 12, 12));
+        bookingEntity.setBookedFrom(Utils.getLocalDate(1, 1, 2022));
+        bookingEntity.setBookedUntil(Utils.getLocalDate(1, 2, 2022));
         bookingEntity.setBookingStatus(BookingStatus.BOOKED);
 
         BookingEntity bookingEntity2 = new BookingEntity();
@@ -102,8 +103,8 @@ class BookingSchedulerTest extends AbstractIT {
         bookingEntity2.setCurrency("USD");
         bookingEntity2.setCarId(1L);
         bookingEntity2.setUserId(4L);
-        bookingEntity2.setBookedFrom(LocalDateTime.of(2022, 1, 1, 12, 12));
-        bookingEntity2.setBookedUntil(LocalDateTime.of(2122, 2, 1, 12, 12));
+        bookingEntity2.setBookedFrom(Utils.getLocalDate(1, 1, 2022));
+        bookingEntity2.setBookedUntil(Utils.getLocalDate(1, 2, 2122));
         bookingEntity2.setBookingStatus(BookingStatus.BOOKED);
 
         bookingRepository.saveAll(Arrays.asList(bookingEntity, bookingEntity2));

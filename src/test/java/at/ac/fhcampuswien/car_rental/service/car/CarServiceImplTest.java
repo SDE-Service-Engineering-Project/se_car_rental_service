@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,9 +63,7 @@ class CarServiceImplTest {
         Mockito.when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(
-                ResponseStatusException.class, () -> {
-                    carService.getCarById(carId);
-                }
+                ResponseStatusException.class, () -> carService.getCarById(carId)
         );
     }
 
@@ -73,8 +71,8 @@ class CarServiceImplTest {
     void should_show_available_car() {
         List<CarEntity> carEntities = Utils.carEntitiesAsList();
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
-        LocalDateTime bookedFrom = Utils.getLocalDateTime("08", "03");
-        LocalDateTime bookedTo = Utils.getLocalDateTime("10", "03");
+        LocalDate bookedFrom = Utils.getLocalDate(8, 3);
+        LocalDate bookedTo = Utils.getLocalDate(10, 3);
 
         Mockito.when(bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED))
                 .thenReturn(bookingEntity);
@@ -90,8 +88,8 @@ class CarServiceImplTest {
     void should_not_show_available_car() {
         List<BookingEntity> bookingEntity = Utils.bookingEntitiesAsList();
         List<Long> notAvailableCarId = List.of(Utils.secondBookingEntity().getCarId());
-        LocalDateTime bookedFrom = Utils.getLocalDateTime("28", "02");
-        LocalDateTime bookedTo = Utils.getLocalDateTime("03", "03");
+        LocalDate bookedFrom = Utils.getLocalDate(28, 2);
+        LocalDate bookedTo = Utils.getLocalDate(3, 3);
         Mockito.when(bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED))
                 .thenReturn(bookingEntity);
         Mockito.when(carRepository.findByCarIdNotIn(notAvailableCarId))

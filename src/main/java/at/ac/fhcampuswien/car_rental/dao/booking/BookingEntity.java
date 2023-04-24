@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "BOOKINGS")
@@ -24,9 +24,9 @@ public class BookingEntity extends BaseEntity {
     @Column(name = "ID_BOOKING")
     Long bookingId;
     @Column(name = "TST_BOOKED_FROM")
-    LocalDateTime bookedFrom;
+    LocalDate bookedFrom;
     @Column(name = "TST_BOOKED_UNTIL")
-    LocalDateTime bookedUntil;
+    LocalDate bookedUntil;
     @Column(name = "TXT_BOOKING_STATUS")
     @Enumerated(EnumType.STRING)
     BookingStatus bookingStatus;
@@ -41,7 +41,7 @@ public class BookingEntity extends BaseEntity {
     @Column(name = "ID_CAR")
     Long carId;
     @ManyToOne
-    @JoinColumn(name="ID_CAR", nullable=false, insertable = false, updatable = false)
+    @JoinColumn(name = "ID_CAR", nullable = false, insertable = false, updatable = false)
     private CarEntity car;
 
     @Column(name = "ID_USER")

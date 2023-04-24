@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDTO> getAvailableCars(LocalDateTime neededFrom, LocalDateTime neededTo) {
+    public List<CarDTO> getAvailableCars(LocalDate neededFrom, LocalDate neededTo) {
         List<BookingEntity> allOpenBookings = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED);
 
         // In that List: All Cars, that are not available in this timespan
