@@ -16,7 +16,7 @@ env:
   IKS_CLUSTER: ${{ secrets.IKS_CLUSTER }} # name or id of cluster
   DEPLOYMENT_NAME: se-car-rental-service-part2 # ADAPT!
   INTERNAL_PORT: 8080 # ADAPT!
-  EXTERNAL_PORT: 32766 # ADAPT!
+  EXTERNAL_PORT: 30068 # ADAPT!
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   POSTGRES_SERVICE_NAME: postgres
