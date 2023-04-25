@@ -74,7 +74,7 @@ class CarServiceImplTest {
         LocalDate bookedFrom = Utils.getLocalDate(8, 3);
         LocalDate bookedTo = Utils.getLocalDate(10, 3);
 
-        Mockito.when(bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(bookingEntity);
         Mockito.when(carRepository.findAll()).thenReturn(carEntities);
 
@@ -90,7 +90,7 @@ class CarServiceImplTest {
         List<Long> notAvailableCarId = List.of(Utils.secondBookingEntity().getCarId());
         LocalDate bookedFrom = Utils.getLocalDate(28, 2);
         LocalDate bookedTo = Utils.getLocalDate(3, 3);
-        Mockito.when(bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(bookingEntity);
         Mockito.when(carRepository.findByCarIdNotIn(notAvailableCarId))
                 .thenReturn(List.of(Utils.carEntity()));

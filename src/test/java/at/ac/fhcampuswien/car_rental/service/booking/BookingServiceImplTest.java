@@ -63,7 +63,7 @@ class BookingServiceImplTest {
 
         Mockito.when(carService.getCarById(createBookingDTO.carId()))
                 .thenReturn(Utils.carDTO());
-        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(List.of(Utils.bookingEntity()));
         Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(Utils.userEntity());
 
@@ -95,7 +95,7 @@ class BookingServiceImplTest {
 
         Mockito.when(carService.getCarById(createBookingDTO.carId()))
                 .thenReturn(Utils.carDTO());
-        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(List.of(Utils.conflictingBookingEntity()));
 
         Assertions.assertThrows(
@@ -110,7 +110,7 @@ class BookingServiceImplTest {
 
         Mockito.when(carService.getCarById(createBookingDTO.carId()))
                 .thenReturn(Utils.carDTO());
-        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(List.of(Utils.conflictingBookingEntity2()));
 
         Assertions.assertThrows(
@@ -203,7 +203,7 @@ class BookingServiceImplTest {
         CarEntity carEntity = Utils.carEntity();
         Mockito.when(carService.getCarById(createBookingDTO.carId()))
                 .thenReturn(Utils.carDTO());
-        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(List.of(Utils.bookingEntity()));
         Mockito.when(currencyConverterService.convert(carEntity.getPrice().floatValue(), "USD", createBookingDTO.currency()))
                 .thenReturn(new ConvertResultDTO(100200.0f, "EUR"));
@@ -222,7 +222,7 @@ class BookingServiceImplTest {
 
         Mockito.when(carService.getCarById(createBookingDTO.carId()))
                 .thenReturn(Utils.carDTO());
-        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED))
+        Mockito.when(bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING)))
                 .thenReturn(List.of(Utils.bookingEntity()));
         Mockito.when(userService.getUserEntity(Mockito.any())).thenReturn(Utils.userEntity());
 
