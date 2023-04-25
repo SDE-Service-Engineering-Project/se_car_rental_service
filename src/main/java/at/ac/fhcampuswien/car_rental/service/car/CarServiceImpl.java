@@ -44,7 +44,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<CarDTO> getAvailableCars(LocalDate neededFrom, LocalDate neededTo) {
-        List<BookingEntity> allOpenBookings = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED);
+        List<BookingEntity> allOpenBookings = bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.BOOKED, BookingStatus.PENDING));
 
         // In that List: All Cars, that are not available in this timespan
         List<Long> carIds = allOpenBookings.stream()

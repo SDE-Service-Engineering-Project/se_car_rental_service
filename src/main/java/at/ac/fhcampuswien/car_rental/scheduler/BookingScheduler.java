@@ -27,7 +27,7 @@ public class BookingScheduler {
     @Transactional
     public void expireBookings() {
         log.info("looking for bookings to expire");
-        List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.BOOKED)
+        List<BookingEntity> list = bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.BOOKED))
                 .stream()
                 .filter((bookingEntity -> !bookingEntity.getBookedUntil().isAfter(LocalDate.now())))
                 .map(item -> item.setStatus(BookingStatus.EXPIRED))
@@ -43,7 +43,7 @@ public class BookingScheduler {
     @Transactional
     public void startBooking() {
         log.info("looking for bookings to set to booked");
-        List<BookingEntity> list = bookingRepository.findAllByBookingStatusEquals(BookingStatus.PENDING)
+        List<BookingEntity> list = bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.PENDING))
                 .stream()
                 .filter((bookingEntity -> bookingEntity.getBookedFrom().isBefore(LocalDate.now())))
                 .map(item -> item.setStatus(BookingStatus.BOOKED))

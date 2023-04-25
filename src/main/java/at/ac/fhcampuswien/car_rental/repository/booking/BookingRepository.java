@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
-    List<BookingEntity> findAllByCarIdEqualsAndBookingStatusEquals(Long carId, BookingStatus bookingStatus);
+    List<BookingEntity> findAllByCarIdEqualsAndBookingStatusIn(Long carId, List<BookingStatus> bookingStatus);
     List<BookingEntity> findAllByUserIdEquals(Long userId);
-    List<BookingEntity> findAllByBookingStatusEquals(BookingStatus bookingStatus);
+    List<BookingEntity> findAllByBookingStatusIn(List<BookingStatus> bookingStatus);
 }

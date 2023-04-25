@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void assertCarIsNotBooked(CreateBookingDTO createBookingDTO) {
         // Check if Car is already booked before proceeding
-        List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusEquals(createBookingDTO.carId(), BookingStatus.BOOKED);
+        List<BookingEntity> savedBookingEntities = bookingRepository.findAllByCarIdEqualsAndBookingStatusIn(createBookingDTO.carId(), List.of(BookingStatus.BOOKED, BookingStatus.PENDING));
         if (savedBookingEntities.isEmpty()) return;
         if (savedBookingEntities
                 .stream()
