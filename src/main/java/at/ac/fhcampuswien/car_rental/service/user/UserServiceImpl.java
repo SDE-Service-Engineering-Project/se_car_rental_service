@@ -12,15 +12,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +30,7 @@ import java.time.LocalDateTime;
 public class UserServiceImpl implements UserService {
     UserRepository repository;
     UserMapper userMapper;
-    AuthenticationManager authenticationManager;
+    ReactiveAuthenticationManager authenticationManager;
     JwtProvider jwtProvider;
     PasswordEncoderMapper passwordEncoderMapper;
     RefreshTokenService refreshTokenService;
@@ -85,17 +84,20 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public AuthenticationDTO login(LoginDTO loginDTO) {
+    public Mono<AuthenticationDTO> login(LoginDTO loginDTO) {
         try {
-            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.userName(), loginDTO.password()));
-            SecurityContextHolder.getContext().setAuthentication(authenticate);
-            String token = jwtProvider.generateToken(authenticate);
-
-            return new AuthenticationDTO(token, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), loginDTO.userName());
-        } catch (AuthenticationException e) {
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.userName(), loginDTO.password()))
+                    .map(auth -> {
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                        return jwtProvider.generateToken(auth);
+                    })
+                    .map(x -> new AuthenticationDTO(x, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), loginDTO.userName()));
+        } catch (Exception e) {
             log.error("Could not find user name {} or password wrong!", loginDTO.userName());
         }
-        return null;
+
+        return Mono.empty();
+
     }
 
     @Override

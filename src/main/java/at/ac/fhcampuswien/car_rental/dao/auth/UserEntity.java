@@ -1,9 +1,6 @@
 package at.ac.fhcampuswien.car_rental.dao.auth;
 
 import at.ac.fhcampuswien.car_rental.dao.BaseEntity;
-import javax.persistence.*;
-
-import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +8,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Set;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "USERS")

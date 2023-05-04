@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.car_rental.config;
 
+import at.ac.fhcampuswien.car_rental.service.user.UserDetailsServiceImpl;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -9,32 +10,27 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.ServerSecurityContextRepository;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 
-import javax.annotation.Resource;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 @Configuration
-@EnableWebSecurity
+@EnableReactiveMethodSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
-    @Resource
-    private UserDetailsService userDetailsService;
+
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${jwt.public.key}")
     RSAPublicKey publicKey;
@@ -42,49 +38,41 @@ public class SecurityConfig {
     @Value("${jwt.private.key}")
     RSAPrivateKey privateKey;
 
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     /**
      * Allows unauthenticated requests to /auth/ and all sub paths
      * Every other request is protected and needs an Access token in the HTTP headers
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         http.cors().and().csrf().disable()
-                .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeExchange(auth -> auth
+                        .pathMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
+                        .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
                 .exceptionHandling();
         return http.build();
     }
 
-
-    /**
-     * sets the spring security authentication manager
-     */
-    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    /**
-     * Implement the custom authentication provider with in memory DB
-     * <p>
-     * password encoder is used to encrypt plain text passwords
-     * <p>
-     */
     @Bean
-    public DaoAuthenticationProvider authProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
+    public ReactiveAuthenticationManager authenticationManager() {
+        UserDetailsRepositoryReactiveAuthenticationManager userDetailsRepositoryReactiveAuthenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+        userDetailsRepositoryReactiveAuthenticationManager.setPasswordEncoder(passwordEncoder());
+        return userDetailsRepositoryReactiveAuthenticationManager;
     }
 
     @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
+    public ServerSecurityContextRepository serverSecurityContextRepository() {
+        return new WebSessionServerSecurityContextRepository();
+    }
+
+    @Bean
+    NimbusReactiveJwtDecoder reactiveJwtDecoder() {
+        return new NimbusReactiveJwtDecoder(this.publicKey);
     }
 
     @Bean
