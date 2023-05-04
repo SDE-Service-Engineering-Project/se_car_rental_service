@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,7 +76,9 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity entity = bookingMapper.toEntity(
                 createBookingDTO,
                 userService.getUserEntity(userService.getUserName()).getUserId(),
-                BigDecimal.valueOf(carDTO.price() * createBookingDTO.daysToRent()).setScale(2, RoundingMode.HALF_UP),
+                BigDecimal.valueOf(
+                        carDTO.price() * LocalDateUtils.calculateDaysBetween(Objects.requireNonNullElse(createBookingDTO.bookedFrom(), LocalDate.now()), createBookingDTO.bookedUntil())
+                ).setScale(2, RoundingMode.HALF_UP),
                 defaultCurrency,
                 calculateSavedPricing(createBookingDTO, carDTO.price()),
                 createBookingDTO.currency(),
@@ -141,7 +144,10 @@ public class BookingServiceImpl implements BookingService {
 
     private BigDecimal calculateSavedPricing(CreateBookingDTO bookingDTO, float price) {
         if (StringUtils.hasText(bookingDTO.currency()) && !bookingDTO.currency().equals(defaultCurrency)) {
-            return BigDecimal.valueOf(currencyConverterService.convert(price, defaultCurrency, bookingDTO.currency()).amount() * bookingDTO.daysToRent());
+            return BigDecimal.valueOf(
+                    currencyConverterService.convert(price, defaultCurrency, bookingDTO.currency()).amount() *
+                    LocalDateUtils.calculateDaysBetween(Objects.requireNonNullElse(bookingDTO.bookedFrom(), LocalDate.now()), bookingDTO.bookedUntil())
+            );
         }
 
         return null;

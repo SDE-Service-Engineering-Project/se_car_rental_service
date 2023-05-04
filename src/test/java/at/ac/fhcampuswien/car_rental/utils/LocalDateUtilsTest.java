@@ -104,4 +104,13 @@ class LocalDateUtilsTest {
                 ResponseStatusException.class, () -> LocalDateUtils.validateTimespan(start, end)
         );
     }
+
+    @Test
+    void should_calculate_days_right() {
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusDays(5);
+        long expected = 6;
+
+        Assertions.assertEquals(expected, LocalDateUtils.calculateDaysBetween(start, end));
+    }
 }

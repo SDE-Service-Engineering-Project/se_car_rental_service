@@ -12,7 +12,6 @@ import lombok.experimental.UtilityClass;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @UtilityClass
@@ -59,7 +58,7 @@ public class Utils {
         LocalDate bookedFrom = getLocalDate(1, 3);
         LocalDate bookedTo = getLocalDate(4, 3);
         Long carId = 1L;
-        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, null);
+        return new CreateBookingDTO(bookedFrom, bookedTo, carId, null);
     }
 
     public CreateBookingDTO createBookingDTOWithUsd() {
@@ -67,7 +66,7 @@ public class Utils {
         LocalDate bookedTo = getLocalDate(4, 3);
         Long carId = 1L;
         String currency = "USD";
-        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
+        return new CreateBookingDTO(bookedFrom, bookedTo, carId, currency);
     }
 
     public CreateBookingDTO createBookingDTOWithCurrency() {
@@ -75,7 +74,7 @@ public class Utils {
         LocalDate bookedTo = getLocalDate(4, 3);
         Long carId = 1L;
         String currency = "EUR";
-        return new CreateBookingDTO(bookedFrom, bookedTo, bookedFrom.until(bookedTo, ChronoUnit.DAYS), carId, currency);
+        return new CreateBookingDTO(bookedFrom, bookedTo, carId, currency);
     }
 
     public BookingEntity bookingEntity() {
