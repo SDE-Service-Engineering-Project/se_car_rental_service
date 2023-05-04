@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 @UtilityClass
 public class LocalDateUtils {
 
@@ -35,5 +37,9 @@ public class LocalDateUtils {
             return false;
         }
         return compareToDate.isBefore(date) || compareToDate.isEqual(date);
+    }
+
+    public long calculateDaysBetween(LocalDate start, LocalDate end) {
+        return DAYS.between(start, end) + 1;
     }
 }
