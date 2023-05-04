@@ -10,14 +10,11 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        // TODO: adapt redirects when finished
         return builder.routes()
-                .route("booking-service", r -> r.path("/api/v1/bookings/**")
-                        .uri("http://localhost:8081/"))
+                .route("booking-service", r -> r.path("/api/v1/bookings/**", "/api/v1/currency/**")
+                        .uri("http://se-booking-service-part2/"))
                 .route("car-service", r -> r.path("/api/v1/cars/**")
-                        .uri("http://localhost:8082/"))
-                .route("currency-converter", r -> r.path("/api/v1/currency/**")
-                        .uri("http://localhost:8083/"))
+                        .uri("http://se-car-service-part2/"))
                 .build();
     }
 }
