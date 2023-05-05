@@ -1,8 +1,8 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: postgres-pv-volume
-  namespace: part1
+  namespace: part2
+  name: postgres-pv-part2
   labels:
     type: local
     app: postgres
@@ -11,21 +11,21 @@ spec:
   capacity:
     storage: 5Gi
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data/pg-part2"
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: postgres-pv-claim
-  namespace: part1
+  name: postgres-pvc-part2
+  namespace: part2
   labels:
     app: postgres
 spec:
   storageClassName: manual
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
