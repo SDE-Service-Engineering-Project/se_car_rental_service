@@ -49,10 +49,16 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         http.cors().and().csrf().disable()
-                .authorizeExchange(auth -> auth
-                        .pathMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
-                        .anyExchange().authenticated()
-                )
+                .authorizeExchange()
+                .pathMatchers(
+                        "/api/v1/auth/**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/webjars/**",
+                        "/actuator/**").permitAll()
+                .anyExchange().authenticated()
+                .and()
                 .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
                 .exceptionHandling();
         return http.build();
