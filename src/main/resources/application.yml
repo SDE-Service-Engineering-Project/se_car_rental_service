@@ -20,6 +20,10 @@ spring:
     schemas: car_rental
   cloud:
     gateway:
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
       globalcors:
@@ -50,3 +54,12 @@ jwt:
     key: classpath:rsaKey/rsa.pub
   private:
     key: classpath:rsaKey/rsa.key
+
+logging:
+  level:
+    reactor:
+      netty: INFO
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
