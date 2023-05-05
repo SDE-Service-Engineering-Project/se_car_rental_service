@@ -18,6 +18,26 @@ spring:
   flyway:
     locations: classpath:db/migration,classpath:db/data
     schemas: car_rental
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://169.51.206.49:30067"
+              - "http://localhost:4200"
+            allowCredentials: true
+            allowed-headers: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PATCH
+              - PUT
+              - OPTIONS
 server:
   error:
     include-message: always
