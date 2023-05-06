@@ -1,25 +1,35 @@
-# Car Rental Service
+# API Gateway
+
+This project is a refactored version of the se_car_rental_service project, utilizing the Strangler Fig Pattern to create a Microservices API Gateway. The API Gateway provides a centralized point of control for microservices, simplifying the process of managing multiple microservices individually. The Spring Cloud Gateway framework is used to create a single-entry point for all client requests, providing routing, load balancing, user authentication, and validation.
+Tools and Technologies
+
+* Spring Cloud Gateway
+* Spring Security
+* Reactor Project
+
+As a publicly available service, the API Gateway forwards requests to downstream microservices. HTTP requests starting with /api/v1/bookings or /api/v1/currency are routed to the booking service, while requests like /api/v1/cars are routed to the car service.
+
+As the API Gateway holds all the user information, a custom header is added to the downstream service call to identify which user is requesting a resource. Downstream services can then validate a user's action directly without requesting the actual entity.
+Getting Started
+
+To get started with this project, you should first clone this repository to your local machine. You can do this by running the following command in your terminal:
 
 
-### How to start Car Rental Service
+## Getting Started
+Clone the project
 
-It is important to generate the sources first (for the SOAP Client Stub) before starting the project. To do that, do the following things:
+``git clone https://github.com/[username]/[repository-name].git``
 
-- Start Currency Converter Service (via Docker)
-- If necessary, change the URL to the Currency Converter Service im **application.yml** and **pom.xml** file 
-- Run the following command: ``mvn clean generate-sources install``
-- Now start the Application
+### Installation
 
-To build the application locally, add the following environment variable should be set in your environment:
-- `CURRENCY_CONVERTER_URL=http://169.51.206.49:32767/?wsdl`
+After cloning the repository, navigate to the project directory and install the dependencies by running the following command in your terminal:
 
-It is also necessary to start a local postgresql instance (best via Docker) and to setup the **application.yml** properly (DB URL).
-Name the database **"postgres"** (or update the application.yml Postgres URL).
+``mvn clean install``
 
-To recreate the database, run the following commands:
-- `ibmcloud login`
-- `kubectl delete services/postgres`
-- `kubectl delete deployment/postgres`
-- `kubectl delete pvc/postgres-pv-claim`
-- `kubectl delete pv/postgres-pv`
-- `kubectl apply -f ./kubernetes/db`
+## Usage
+
+To start the server, run the following command in your terminal:
+
+``mvn spring-boot:run``
+
+By default, the server will be running at http://localhost:8080.
