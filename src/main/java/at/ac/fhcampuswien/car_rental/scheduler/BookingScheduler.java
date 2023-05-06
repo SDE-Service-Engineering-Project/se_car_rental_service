@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.car_rental.scheduler;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingEntity;
 import at.ac.fhcampuswien.car_rental.dao.booking.BookingStatus;
 import at.ac.fhcampuswien.car_rental.repository.booking.BookingRepository;
+import at.ac.fhcampuswien.car_rental.utils.LocalDateUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -45,7 +46,7 @@ public class BookingScheduler {
         log.info("looking for bookings to set to booked");
         List<BookingEntity> list = bookingRepository.findAllByBookingStatusIn(List.of(BookingStatus.PENDING))
                 .stream()
-                .filter((bookingEntity -> bookingEntity.getBookedFrom().isBefore(LocalDate.now())))
+                .filter((bookingEntity -> LocalDateUtils.isBeforeOrEqual(LocalDate.now(), bookingEntity.getBookedFrom())))
                 .map(item -> item.setStatus(BookingStatus.BOOKED))
                 .toList();
 
