@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -27,13 +29,14 @@ public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
      */
     @Override
     public Mono<UserDetails> findByUsername(String username) {
-        return Mono.just(repository.findByUserName(username).map(userEntity -> new User(userEntity.getUserName(),
-                        userEntity.getPassword(),
-                        true,
-                        true,
-                        true,
-                        true,
-                        Collections.singletonList(new SimpleGrantedAuthority("USER"))))
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found")));
+        Optional<User> user = repository.findByUserName(username).map(userEntity -> new User(userEntity.getUserName(),
+                userEntity.getPassword(),
+                true,
+                true,
+                true,
+                true,
+                Collections.singletonList(new SimpleGrantedAuthority("USER"))));
+
+        return user.<Mono<UserDetails>>map(Mono::just).orElseGet(Mono::empty);
     }
 }

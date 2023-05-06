@@ -85,19 +85,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Mono<AuthenticationDTO> login(LoginDTO loginDTO) {
-        try {
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.userName(), loginDTO.password()))
-                    .map(auth -> {
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                        return jwtProvider.generateToken(auth);
-                    })
-                    .map(x -> new AuthenticationDTO(x, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), loginDTO.userName()));
-        } catch (Exception e) {
-            log.error("Could not find user name {} or password wrong!", loginDTO.userName());
-        }
-
-        return Mono.empty();
-
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.userName(), loginDTO.password()))
+                .map(auth -> {
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    return jwtProvider.generateToken(auth);
+                })
+                .map(x -> new AuthenticationDTO(x, refreshTokenService.generateRefreshToken().getToken(), LocalDateTime.now().plusSeconds(jwtProvider.getJwtExpirationInSeconds()), loginDTO.userName()))
+                .onErrorResume(e -> {
+                    log.error("Could not authenticate user {} with error {}", loginDTO.userName(), e.getMessage());
+                    return Mono.empty();
+                });
     }
 
     @Override
