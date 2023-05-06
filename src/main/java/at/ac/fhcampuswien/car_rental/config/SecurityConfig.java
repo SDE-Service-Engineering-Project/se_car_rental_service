@@ -8,8 +8,12 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.gateway.config.GlobalCorsProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
@@ -22,6 +26,9 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -93,5 +100,19 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @RefreshScope
+    public CorsWebFilter corsWebFilter(CorsConfigurationSource corsConfigurationSource) {
+        return new CorsWebFilter(corsConfigurationSource);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(GlobalCorsProperties globalCorsProperties) {
+        var source = new UrlBasedCorsConfigurationSource();
+        globalCorsProperties.getCorsConfigurations().forEach(source::registerCorsConfiguration);
+        return source;
     }
 }
